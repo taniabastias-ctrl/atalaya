@@ -1,0 +1,76 @@
+name: Licitaciones TI diarias
+
+on:
+  schedule:
+    # Lunes a viernes 09:30 UTC = 06:30 en Chile en horario de verano (05:30 en invierno).
+    # La API recomienda consultas masivas entre 22:00 y 07:00. GitHub puede retrasar el inicio unos minutos.
+    - cron: "30 9 * * 1-5"
+  workflow_dispatch: {}   # permite ejecutarlo a mano desde la pestaña Actions
+
+permissions:
+  contents: read
+
+concurrency:
+  group: licitaciones
+  cancel-in-progress: false
+
+jobs:
+  licitaciones:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Tests
+        run: pytest -q
+
+      # vistos.json guarda las licitaciones ya reportadas. Se conserva entre ejecuciones con la caché de Actions
+      # (cada ejecución guarda una versión nueva y la siguiente recupera la más reciente).
+      - name: Recuperar licitaciones ya vistas
+        uses: actions/cache/restore@v4
+        with:
+          path: vistos.json
+          key: vistos-${{ github.run_id }}
+          restore-keys: vistos-
+
+      # Primera ejecución (caché vacía): partir del registro inicial subido al repo para no repetir lo ya enviado.
+      - name: Registro inicial
+        run: |
+          if [ ! -f vistos.json ] && [ -f vistos_inicial.json ]; then
+            cp vistos_inicial.json vistos.json && echo "Usando vistos_inicial.json"
+          fi
+
+      - name: Buscar licitaciones y enviar correo
+        env:
+          MP_TICKET: ${{ secrets.MP_TICKET }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          TZ: America/Santiago
+        run: python mp_agent.py --dias 1 --min-score 3 --out "licitaciones_$(date +%Y%m%d).xlsx" --mail
+
+      - name: Guardar licitaciones vistas
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: vistos.json
+          key: vistos-${{ github.run_id }}
+
+      - name: Guardar Excel como respaldo
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: licitaciones-${{ github.run_id }}
+          path: licitaciones_*.xlsx
+          retention-days: 30
+          if-no-files-found: ignore

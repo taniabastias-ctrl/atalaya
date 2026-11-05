@@ -1,0 +1,11 @@
+{
+ "Cantidad": 4,
+ "FechaCreacion": "2026-11-04T08:00:00",
+ "Version": "v1",
+ "Listado": [
+  {"CodigoExterno": "1234-56-LE26", "Nombre": "Servicio de desarrollo de software y mesa de ayuda", "CodigoEstado": 5, "FechaCierre": "2026-11-20T15:00:00"},
+  {"CodigoExterno": "2222-10-L126", "Nombre": "Adquisición de resmas de papel", "CodigoEstado": 5, "FechaCierre": "2026-11-10T12:00:00"},
+  {"CodigoExterno": "3333-20-LP26", "Nombre": "Plataforma de integración MuleSoft para core bancario", "CodigoEstado": 5, "FechaCierre": null},
+  {"CodigoExterno": "4444-30-L126", "Nombre": "Base de datos de proveedores de alimentos", "CodigoEstado": 5, "FechaCierre": "2026-11-12T12:00:00"}
+ ]
+}
