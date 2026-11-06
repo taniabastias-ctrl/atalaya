@@ -42,7 +42,8 @@ para Sermaluc Ltda. (staffing TI y servicios gestionados, sector financiero). Us
 1. Subir a un repo GitHub PRIVADO y crear los secrets (ver README). Lanzar el workflow a mano y revisar el correo.
 2. Correo: Sermaluc usa Google Workspace (MX aspmx.l.google.com) → smtp.gmail.com:587 con contraseña de aplicación.
    Envía tania.bastias@sermaluc.cl; destinatarios (MAIL_TO): michael.ibanez, marco.ponce, joaquin.letelier,
-   cristian.andrade, valentina.erns (@sermaluc.cl). Envío oficial manual hecho el 2026-11-05 (22 licitaciones);
+   cristian.andrade, valentina.ernst, rodrigo.tapia (@sermaluc.cl). Envío oficial manual hecho el 2026-11-05 (22 licitaciones;
+   ese envío fue a valentina.erns, dirección errónea, y sin rodrigo.tapia);
    `vistos_inicial.json` = ese registro, para que la 1.ª ejecución en Actions no las repita.
 3. Seguir afinando `KEYWORDS`/`NEGATIVOS` con Tania: ¿interesan compras de licencias de software? (hoy salen como relevantes).
 4. Opcional: scoring con LLM para explicar por qué una licitación calza con Sermaluc.
