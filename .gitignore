@@ -5,3 +5,4 @@ __pycache__/
 vistos.json
 vistos.json.tmp
 .venv/
+.wrangler/
