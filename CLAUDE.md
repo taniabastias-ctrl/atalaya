@@ -26,8 +26,11 @@ para Sermaluc Ltda. (staffing TI y servicios gestionados, sector financiero). Us
   `lblFicha2Region`, `lblFicha3Cierre`, `lblFicha3Publicacion`). Fixture: `tests/fixtures/ficha_584264-52-LP26.html`.
 - `NEGATIVOS` en `mp_agent.py`: términos que restan puntaje (impresión, insumos, equipamiento...).
 - Correo: `enviar_correo.py` (SMTP; variables SMTP_HOST/PORT/USER/PASSWORD, MAIL_TO, MAIL_FROM). `--mail` en mp_agent.
-- GitHub Actions: `.github/workflows/licitaciones.yml` (L-V 09:30 UTC; vistos.json vía actions/cache; Excel como artifact).
-  AÚN NO SUBIDO a GitHub ni configurados los secrets; correo NO probado (faltan datos SMTP de Sermaluc).
+- GitHub Actions: `.github/workflows/licitaciones.yml` (solo workflow_dispatch; vistos.json vía actions/cache; Excel como artifact).
+  Repo privado taniabastias-ctrl/licitaciones-mp, secrets cargados, funcionando desde el 2026-11-06.
+- Horario: el `schedule` de GitHub se atrasó 7 h el 2026-11-06 y no corrió el 2026-11-09 a la hora → se quitó.
+  Lo dispara el Worker de Cloudflare `licitaciones-disparador` (carpeta `disparador/`): crons 09:30 y 10:30 UTC L-V,
+  el código solo dispara si son las 06:xx en America/Santiago. Necesita secret GITHUB_TOKEN (fine-grained, Actions RW).
 - Python local: 3.15 vía `py`; entorno en `.venv`. 32 tests pasan.
 - Hecho antes el 2026-11-04:
   - Corregido: `IndexError` cuando el detalle viene con `Listado` vacío (`primer_detalle`).

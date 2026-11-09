@@ -21,8 +21,9 @@ Opciones útiles:
 - `--vistos archivo.json`: dónde se guardan los códigos ya vistos.
 
 ## Ejecución diaria en GitHub Actions
-El workflow `.github/workflows/licitaciones.yml` corre de lunes a viernes a las 09:30 UTC
-(06:30 en Chile en horario de verano) y también se puede lanzar a mano desde la pestaña **Actions → Run workflow**.
+El workflow `.github/workflows/licitaciones.yml` corre de lunes a viernes a las 06:30 hora de Chile. No usa el horario
+de GitHub (se atrasaba horas): lo lanza un Worker de Cloudflare, ver [`disparador/README.md`](disparador/README.md).
+También se puede lanzar a mano desde la pestaña **Actions → Run workflow**.
 
 1. Crea un repositorio **privado** en GitHub y sube esta carpeta (el `.gitignore` ya excluye `.env`).
 2. En el repo: **Settings → Secrets and variables → Actions → New repository secret**, crea:

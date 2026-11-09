@@ -1,11 +1,9 @@
 name: Licitaciones TI diarias
 
 on:
-  schedule:
-    # Lunes a viernes 09:30 UTC = 06:30 en Chile en horario de verano (05:30 en invierno).
-    # La API recomienda consultas masivas entre 22:00 y 07:00. GitHub puede retrasar el inicio unos minutos.
-    - cron: "30 9 * * 1-5"
-  workflow_dispatch: {}   # permite ejecutarlo a mano desde la pestaña Actions
+  # Sin `schedule`: GitHub atrasaba los horarios hasta 7 horas. Lo lanza puntualmente, L-V a las 06:30 de Chile,
+  # el Worker de Cloudflare en `disparador/` (vía API workflow_dispatch). También se puede lanzar a mano.
+  workflow_dispatch: {}
 
 permissions:
   contents: read
