@@ -241,6 +241,7 @@ def run(ticket, dias, min_score, min_score_nombre=2, hoy=None):
             "Palabras clave": ", ".join(k2),
             "Descripción": (d0.get("Descripcion") or "")[:500],
             "Link": FICHA.format(code=code),
+            "_detalle": d0,  # respuesta completa (para Atalaya); no va al Excel
         })
     # Más relevantes primero; a igual relevancia, la que cierra antes. Sin fecha de cierre, al final.
     results.sort(key=lambda r: (-r["Relevancia"], r["Cierre"] or "9999"))
@@ -251,7 +252,7 @@ def to_excel(rows, total, path):
     wb = Workbook()
     ws = wb.active
     ws.title = "Licitaciones"
-    cols = list(rows[0].keys()) if rows else ["Código", "Nombre"]
+    cols = [c for c in rows[0].keys() if not c.startswith("_")] if rows else ["Código", "Nombre"]
     ws.append(cols)
     for c in ws[1]:
         c.font = Font(bold=True, color="FFFFFF")
@@ -305,6 +306,24 @@ def cargar_env(path=".env"):
             os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 
+def usar_palabras_de_atalaya(locales=False):
+    """Si Atalaya está configurado, reemplaza KEYWORDS/NEGATIVOS por las palabras definidas por el equipo
+    (Configuración > Palabras clave). Si no se pueden leer, se usan las del código y se avisa."""
+    if locales or not (os.environ.get("ATALAYA_URL") and os.environ.get("ATALAYA_TOKEN")):
+        return False
+    import atalaya
+    try:
+        pos, neg = atalaya.cargar_palabras()
+    except Exception as e:  # noqa: BLE001 — cualquier fallo de red o formato: seguir con las del código
+        print(f"[aviso] no se pudieron leer las palabras clave de Atalaya ({type(e).__name__}); "
+              f"se usan las {len(KEYWORDS)} del agente", file=sys.stderr)
+        return False
+    KEYWORDS.clear(); KEYWORDS.update(pos)      # se modifican en el mismo objeto: score() y atalaya.py las ven
+    NEGATIVOS.clear(); NEGATIVOS.update(neg)
+    print(f"Palabras clave desde Atalaya: {len(pos)} suman, {len(neg)} restan")
+    return True
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Licitaciones TI de Mercado Público -> Excel")
     ap.add_argument("--dias", type=int, default=1)
@@ -315,8 +334,13 @@ def main(argv=None):
     ap.add_argument("--vistos", default="vistos.json", help="archivo con los códigos ya reportados")
     ap.add_argument("--solo-nuevas", action="store_true", help="incluir en el Excel solo las nuevas")
     ap.add_argument("--mail", action="store_true", help="enviar el Excel por correo (variables SMTP_*, MAIL_TO)")
+    ap.add_argument("--atalaya", action="store_true",
+                    help="publicar el resultado en la plataforma Atalaya (variables ATALAYA_URL, ATALAYA_TOKEN)")
+    ap.add_argument("--palabras-locales", action="store_true",
+                    help="usar las palabras clave del código en vez de las configuradas en Atalaya")
     a = ap.parse_args(argv)
     cargar_env()
+    usar_palabras_de_atalaya(a.palabras_locales)
     t = os.environ.get("MP_TICKET")
     if not t:
         sys.exit("Falta la variable de entorno MP_TICKET (ticket de api.mercadopublico.cl)")
@@ -325,6 +349,13 @@ def main(argv=None):
         faltan = enviar_correo.config_faltante()
         if faltan:  # fallar antes de gastar cuota de API
             sys.exit(f"--mail requiere estas variables: {', '.join(faltan)}")
+    faltan_atalaya = []
+    if a.atalaya:
+        import atalaya
+        # Sin configuración igual se busca y se envía el correo; al final la ejecución falla para que se note.
+        faltan_atalaya = atalaya.config_faltante()
+        if faltan_atalaya:
+            print(f"[error] --atalaya sin configurar ({', '.join(faltan_atalaya)}): no se publicará en Atalaya", file=sys.stderr)
     rows, total = run(t, a.dias, a.min_score, a.min_score_nombre)
     if total == 0:
         # La API no respondió (o ticket inválido): fallar para que se note, en vez de enviar un informe vacío.
@@ -340,6 +371,16 @@ def main(argv=None):
         enviar_correo.enviar(rows, total, a.out)
     # Se guarda al final: si el correo falla, mañana estas licitaciones vuelven a salir como nuevas.
     guardar_vistos(a.vistos, vistos)
+    # Atalaya calcula sus propias "nuevas" y conserva el trabajo del equipo: si falla, se puede reenviar.
+    if a.atalaya:
+        if faltan_atalaya:
+            sys.exit(f"No se publicó en Atalaya: faltan {', '.join(faltan_atalaya)} (el Excel y el correo sí quedaron).")
+        for intento in range(3):  # reintenta fallas de red pasajeras
+            if atalaya.publicar(rows, total):
+                break
+            time.sleep(10 * (intento + 1))
+        else:
+            sys.exit("No se pudo publicar en Atalaya tras 3 intentos (el Excel y el correo sí quedaron).")
 
 
 if __name__ == "__main__":

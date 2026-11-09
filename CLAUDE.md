@@ -41,6 +41,15 @@ para Sermaluc Ltda. (staffing TI y servicios gestionados, sector financiero). Us
   - Palabras clave agregadas: banca, bancario, core bancario, créditos, Android, iOS, Java, microservicios, API, servicios gestionados.
   - Tests en `tests/` con fixtures en `tests/fixtures/` (forma de respuesta SUPUESTA; reemplazar por respuestas reales guardadas).
 
+## Atalaya (plataforma web del equipo) — 2026-11-06
+- `--atalaya` publica el resultado en https://atalaya-sermaluc.tania-bastias.workers.dev (POST /api/reporte,
+  token `ATALAYA_TOKEN` en `.env`). Código de la plataforma: C:\Users\Tania.bastias\Atalaya.
+- `atalaya.py` mapea el detalle completo de la API (fechas: FechaFinal=preguntas, FechaPubRespuestas, aperturas,
+  adjudicación; Tipo; duración; contacto). Las filas guardan `_detalle` (no va al Excel).
+- La API no entrega la lista de documentos de las bases: se envía un checklist estándar por tipo (LQ/LR con garantía).
+- Primera carga real: 2026-11-06, 22 licitaciones de 5.258 revisadas.
+- Las palabras clave ahora se administran en Atalaya (Configuración); el agente las descarga al inicio (`usar_palabras_de_atalaya`, GET /api/agente/palabras) y usa KEYWORDS/NEGATIVOS del código solo como respaldo. 41 tests pasan.
+
 ## Pendientes (en orden)
 1. Subir a un repo GitHub PRIVADO y crear los secrets (ver README). Lanzar el workflow a mano y revisar el correo.
 2. Correo: Sermaluc usa Google Workspace (MX aspmx.l.google.com) → smtp.gmail.com:587 con contraseña de aplicación.

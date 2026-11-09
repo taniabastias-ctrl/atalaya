@@ -16,6 +16,8 @@ El script lee `MP_TICKET` desde `.env` automáticamente.
 
 Opciones útiles:
 - `--mail`: envía el Excel por correo (requiere las variables SMTP de abajo).
+- `--atalaya`: publica el resultado en la plataforma Atalaya (variables `ATALAYA_URL` y `ATALAYA_TOKEN`; ver `atalaya.py`).
+- **Palabras clave:** si `ATALAYA_URL` y `ATALAYA_TOKEN` están configurados, antes de consultar se descargan las palabras definidas en Atalaya (Configuración → Palabras clave). Si Atalaya no responde, se usan las del código (`KEYWORDS`/`NEGATIVOS`). Con `--palabras-locales` se fuerzan las del código.
 - `--solo-nuevas`: el Excel incluye solo licitaciones no reportadas antes.
 - `--min-score-nombre N` (por defecto 2): puntaje mínimo del nombre para pedir el detalle a la API (ahorra cuota).
 - `--vistos archivo.json`: dónde se guardan los códigos ya vistos.
@@ -37,6 +39,8 @@ También se puede lanzar a mano desde la pestaña **Actions → Run workflow**.
 | `SMTP_PASSWORD` | (contraseña de aplicación) | ver abajo; NO la contraseña normal |
 | `MAIL_TO` | `michael.ibanez@sermaluc.cl,marco.ponce@sermaluc.cl` | separados por coma |
 | `MAIL_FROM` | `tania.bastias@sermaluc.cl` | opcional |
+| `ATALAYA_URL` | `https://atalaya-sermaluc.tania-bastias.workers.dev` | plataforma Atalaya |
+| `ATALAYA_TOKEN` | (AGENT_TOKEN de Atalaya) | está en `.secretos-produccion.json` de la carpeta Atalaya |
 
 **Contraseña de aplicación de Google:** requiere tener activada la verificación en 2 pasos. Se crea en
 https://myaccount.google.com/apppasswords (nombre sugerido: "Licitaciones MP"). Si la página dice que no está

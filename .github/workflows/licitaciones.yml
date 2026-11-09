@@ -45,7 +45,7 @@ jobs:
             cp vistos_inicial.json vistos.json && echo "Usando vistos_inicial.json"
           fi
 
-      - name: Buscar licitaciones y enviar correo
+      - name: Buscar licitaciones, enviar correo y publicar en Atalaya
         env:
           MP_TICKET: ${{ secrets.MP_TICKET }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
@@ -54,8 +54,10 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           MAIL_TO: ${{ secrets.MAIL_TO }}
           MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          ATALAYA_URL: ${{ secrets.ATALAYA_URL || 'https://atalaya-sermaluc.tania-bastias.workers.dev' }}
+          ATALAYA_TOKEN: ${{ secrets.ATALAYA_TOKEN }}
           TZ: America/Santiago
-        run: python mp_agent.py --dias 1 --min-score 3 --out "licitaciones_$(date +%Y%m%d).xlsx" --mail
+        run: python mp_agent.py --dias 1 --min-score 3 --out "licitaciones_$(date +%Y%m%d).xlsx" --mail --atalaya
 
       - name: Guardar licitaciones vistas
         if: success()
