@@ -1,0 +1,37 @@
+{
+ "Cantidad": 5,
+ "FechaCreacion": "2026-11-04T20:58:08.3747754Z",
+ "Version": "v1",
+ "Listado": [
+  {
+   "CodigoExterno": "1001-17-LE26",
+   "Nombre": "ESTABILIZADOR DE SUELO TIPO QUIMICO",
+   "CodigoEstado": 5,
+   "FechaCierre": "2026-11-12T15:00:00"
+  },
+  {
+   "CodigoExterno": "1057922-33-LP26",
+   "Nombre": "ADQUISICION EQUIPOS Y EQUIPAMIENTO TECNOLOGÍAS DE LA INFORMACIÓN PARA CESFAM CON SAR RAHUE ALTO",
+   "CodigoEstado": 5,
+   "FechaCierre": "2026-11-05T15:15:00"
+  },
+  {
+   "CodigoExterno": "1436733-32-LR26",
+   "Nombre": "SERVICIOS GESTIONADOS DE IMPRESIÓN",
+   "CodigoEstado": 5,
+   "FechaCierre": "2026-11-30T16:00:00"
+  },
+  {
+   "CodigoExterno": "2699-39-LE26",
+   "Nombre": "CONSULTORÍA DE CIBERSEGURIDAD Y DATOS PERSONALES",
+   "CodigoEstado": 5,
+   "FechaCierre": "2026-11-16T15:01:00"
+  },
+  {
+   "CodigoExterno": "584264-52-LP26",
+   "Nombre": "SERVICIOS TI ADMIN. MICROSOFT AZURE SOPORTE",
+   "CodigoEstado": 5,
+   "FechaCierre": "2026-11-12T15:05:00"
+  }
+ ]
+}

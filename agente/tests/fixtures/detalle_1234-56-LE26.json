@@ -1,0 +1,12 @@
+{
+ "Cantidad": 1,
+ "Listado": [{
+  "CodigoExterno": "1234-56-LE26",
+  "Nombre": "Servicio de desarrollo de software y mesa de ayuda",
+  "Descripcion": "Contratación de servicios de desarrollo de software, analista programador y soporte técnico N2.",
+  "MontoEstimado": 120000000,
+  "Moneda": "CLP",
+  "Comprador": {"NombreOrganismo": "Servicio de Impuestos Internos", "NombreUnidad": "Depto. Informática", "RegionUnidad": "Región Metropolitana de Santiago"},
+  "Fechas": {"FechaPublicacion": "2026-11-03T10:00:00", "FechaCierre": "2026-11-20T15:00:00"}
+ }]
+}

@@ -1,0 +1,14 @@
+name = "licitaciones-disparador"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+# Lunes a viernes 09:30 y 10:30 UTC. El código dispara solo la que cae a las 06:30 en Chile
+# (09:30 UTC en horario de verano, 10:30 UTC en invierno).
+[triggers]
+crons = ["30 9 * * 1-5", "30 10 * * 1-5"]
+
+[observability]
+enabled = true
+
+# Secret (no va en este archivo): GITHUB_TOKEN
+#   npx wrangler secret put GITHUB_TOKEN
