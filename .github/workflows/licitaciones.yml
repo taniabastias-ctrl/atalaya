@@ -60,7 +60,8 @@ jobs:
         run: python mp_agent.py --dias 1 --min-score 3 --out "licitaciones_$(date +%Y%m%d).xlsx" --mail --atalaya
 
       - name: Guardar licitaciones vistas
-        if: success()
+        # también si solo falló la publicación en Atalaya: el correo ya salió y no debe repetir las nuevas mañana
+        if: always() && hashFiles('vistos.json') != ''
         uses: actions/cache/save@v4
         with:
           path: vistos.json
