@@ -1,0 +1,18 @@
+{
+  "name": "atalaya-licitaciones",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Atalaya · Radar de licitaciones de Mercado Público para Sermaluc",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5"
+  },
+  "scripts": {
+    "start": "node servidor/server.mjs",
+    "reporte": "node scripts/enviar-reporte.mjs",
+    "test": "node servidor/pruebas.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.158.0"
+  }
+}

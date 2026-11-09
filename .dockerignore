@@ -1,0 +1,12 @@
+node_modules
+.wrangler
+.env
+.env.*
+.secretos-produccion.json
+datos
+respaldos
+presentacion
+instalacion
+docs
+wrangler.toml
+*.log

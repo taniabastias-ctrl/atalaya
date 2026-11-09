@@ -1,0 +1,74 @@
+# Atalaya en servidor propio: aplicación + proxy HTTPS (Caddy) + agente opcional.
+#   cd instalacion
+#   docker compose up -d --build                 # plataforma
+#   docker compose --profile agente up -d --build  # + agente de licitaciones diario
+# Variables: instalacion/.env (ver .env.example) y, para el agente, instalacion/agente.env.
+name: atalaya
+
+services:
+  atalaya:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: atalaya:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_PATH: /data/atalaya.db
+      FILES_PATH: /data/archivos
+      PORT: "8080"
+      DEMO: "0"
+    volumes:
+      - atalaya-datos:/data              # base de datos, archivos subidos y respaldos
+      - ./datos:/importar:ro             # solo para la carga inicial (crear-base.mjs)
+    expose:
+      - "8080"                           # no se publica: solo Caddy llega a la aplicación
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "5" }
+
+  caddy:
+    image: caddy:2.8
+    restart: unless-stopped
+    depends_on: [atalaya]
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMINIO: ${DOMINIO:?Define DOMINIO en instalacion/.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-datos:/data                # certificados TLS
+      - caddy-config:/config
+
+  # Agente de licitaciones (opcional): corre de lunes a viernes a las 06:30 hora de Chile
+  # y publica en Atalaya por la red interna, sin pasar por internet.
+  agente:
+    profiles: ["agente"]
+    build:
+      context: ${AGENTE_DIR:-../../MPbl/mercado_publico_agent}
+      dockerfile_inline: |
+        FROM python:3.12-slim
+        ENV TZ=America/Santiago PYTHONUNBUFFERED=1
+        WORKDIR /agente
+        COPY requirements.txt ./
+        RUN pip install --no-cache-dir -r requirements.txt
+        COPY *.py vistos_inicial.json ./
+        RUN useradd -m agente && mkdir -p /trabajo && chown agente /trabajo
+        USER agente
+        CMD ["sh", "-c", "[ -f /trabajo/vistos.json ] || cp vistos_inicial.json /trabajo/vistos.json; while :; do ahora=$$(date +%s); meta=$$(date -d '06:30' +%s); [ $$ahora -ge $$meta ] && meta=$$(date -d 'tomorrow 06:30' +%s); echo \"Próxima ejecución: $$(date -d @$$meta)\"; sleep $$((meta-ahora)); if [ $$(date +%u) -le 5 ]; then python mp_agent.py --dias 1 --min-score 3 --out /trabajo/licitaciones_$$(date +%Y%m%d).xlsx --vistos /trabajo/vistos.json --mail --atalaya || echo 'La ejecución terminó con error (ver arriba)'; fi; done"]
+    image: atalaya-agente:latest
+    restart: unless-stopped
+    depends_on: [atalaya]
+    env_file: agente.env
+    environment:
+      ATALAYA_URL: http://atalaya:8080
+    volumes:
+      - agente-trabajo:/trabajo           # vistos.json y Excel de cada día
+
+volumes:
+  atalaya-datos:
+  caddy-datos:
+  caddy-config:
+  agente-trabajo:

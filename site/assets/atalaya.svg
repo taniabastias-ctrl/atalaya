@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Atalaya">
+  <defs>
+    <linearGradient id="a-sweep" x1="24" y1="24" x2="44" y2="8" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22C3EE" stop-opacity="0"/>
+      <stop offset="1" stop-color="#22C3EE" stop-opacity=".95"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="14" fill="#0B1530"/>
+  <circle cx="24" cy="24" r="16" fill="none" stroke="#0071FF" stroke-width="2.4"/>
+  <circle cx="24" cy="24" r="9" fill="none" stroke="#0071FF" stroke-opacity=".55" stroke-width="2"/>
+  <path d="M24 24 L24 8 A16 16 0 0 1 38.9 18.2 Z" fill="url(#a-sweep)"/>
+  <circle cx="24" cy="24" r="2.6" fill="#FFFFFF"/>
+  <circle cx="33.5" cy="13.5" r="3" fill="#FFFFFF"/>
+</svg>

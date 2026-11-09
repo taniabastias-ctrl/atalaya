@@ -1,0 +1,1257 @@
+{
+  "meta": {
+    "agente": "Agente de Licitaciones Sermaluc",
+    "fuente": "API Mercado Público (ChileCompra)",
+    "generado": "2026-11-06T08:00",
+    "fechaReferencia": "2026-11-06",
+    "demo": true,
+    "revisadas": 342,
+    "palabrasClave": [
+      "mesa de ayuda",
+      "soporte TI",
+      "desarrollo de software",
+      "staffing TI",
+      "outsourcing TI",
+      "ciberseguridad",
+      "cloud",
+      "analítica de datos",
+      "inteligencia artificial",
+      "consultoría TI",
+      "QA y testing",
+      "RPA",
+      "transformación digital"
+    ]
+  },
+  "equipo": [
+    {
+      "email": "camila.rojas@sermaluc.cl",
+      "nombre": "Camila Rojas",
+      "cargo": "Key Account Manager"
+    },
+    {
+      "email": "matias.fuentes@sermaluc.cl",
+      "nombre": "Matías Fuentes",
+      "cargo": "Preventa"
+    },
+    {
+      "email": "valentina.soto@sermaluc.cl",
+      "nombre": "Valentina Soto",
+      "cargo": "Key Account Manager"
+    },
+    {
+      "email": "felipe.araya@sermaluc.cl",
+      "nombre": "Felipe Araya",
+      "cargo": "Arquitecto de soluciones"
+    },
+    {
+      "email": "ignacia.morales@sermaluc.cl",
+      "nombre": "Ignacia Morales",
+      "cargo": "Analista de licitaciones"
+    }
+  ],
+  "licitaciones": [
+    {
+      "codigo": "4021-9-L126",
+      "nombre": "Licencias y soporte de herramientas de analítica de datos",
+      "organismo": "Instituto Nacional de Estadísticas",
+      "unidad": "Departamento de Tecnologías de la Información",
+      "region": "Metropolitana",
+      "tipo": "L1",
+      "montoEstimado": 6500000,
+      "duracion": "12 meses",
+      "publicada": "2026-11-02T10:00",
+      "nueva": false,
+      "match": 78,
+      "palabrasClave": [
+        "analítica de datos",
+        "soporte TI"
+      ],
+      "descripcion": "Adquisición de 15 licencias anuales de herramienta de visualización y analítica de datos, incluyendo soporte técnico, actualizaciones y capacitación inicial para el equipo de estudios.",
+      "fechas": {
+        "publicacion": "2026-11-02T10:00",
+        "finPreguntas": "2026-11-04T15:00",
+        "respuestas": "2026-11-05T18:00",
+        "cierre": "2026-11-07T15:00",
+        "aperturaTecnica": "2026-11-07T15:05",
+        "adjudicacion": "2026-11-20T18:00"
+      },
+      "criterios": [
+        {
+          "nombre": "Precio",
+          "peso": 70
+        },
+        {
+          "nombre": "Plazo de entrega",
+          "peso": 20
+        },
+        {
+          "nombre": "Cumplimiento de requisitos formales",
+          "peso": 10
+        }
+      ],
+      "garantias": [],
+      "contacto": {
+        "nombre": "Unidad de Compras INE",
+        "email": "compras@ine.example.cl"
+      },
+      "documentos": [
+        {
+          "id": "d1",
+          "nombre": "Anexo N°1 · Declaración jurada de inhabilidades",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d2",
+          "nombre": "Inscripción vigente en Registro de Proveedores",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d3",
+          "nombre": "Ficha técnica de la herramienta ofertada",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d4",
+          "nombre": "Plan de capacitación",
+          "tipo": "Técnico",
+          "obligatorio": false
+        },
+        {
+          "id": "d5",
+          "nombre": "Anexo N°2 · Oferta económica",
+          "tipo": "Económico",
+          "obligatorio": true
+        }
+      ]
+    },
+    {
+      "codigo": "1509-45-LP26",
+      "nombre": "Servicio de mesa de ayuda y soporte TI nivel 1 y 2",
+      "organismo": "Servicio de Salud Metropolitano Oriente",
+      "unidad": "Subdepartamento de Informática",
+      "region": "Metropolitana",
+      "tipo": "LP",
+      "montoEstimado": 480000000,
+      "duracion": "36 meses",
+      "publicada": "2026-10-20T09:00",
+      "nueva": false,
+      "match": 96,
+      "palabrasClave": [
+        "mesa de ayuda",
+        "soporte TI",
+        "outsourcing TI"
+      ],
+      "descripcion": "Contratación de servicio integral de mesa de ayuda (Service Desk) con atención 8x5 y soporte en terreno nivel 1 y 2 para 4.200 usuarios distribuidos en 6 establecimientos de la red. Incluye gestión de incidentes bajo ITIL v4, herramienta de ticketing y reportabilidad mensual de SLA.",
+      "fechas": {
+        "publicacion": "2026-10-20T09:00",
+        "visitaTerreno": "2026-10-27T10:00",
+        "finPreguntas": "2026-10-30T15:00",
+        "respuestas": "2026-11-03T18:00",
+        "cierre": "2026-11-08T15:00",
+        "aperturaTecnica": "2026-11-09T10:00",
+        "aperturaEconomica": "2026-11-16T10:00",
+        "adjudicacion": "2026-12-04T18:00"
+      },
+      "criterios": [
+        {
+          "nombre": "Oferta técnica",
+          "peso": 45
+        },
+        {
+          "nombre": "Precio",
+          "peso": 35
+        },
+        {
+          "nombre": "Experiencia del oferente",
+          "peso": 15
+        },
+        {
+          "nombre": "Requisitos formales",
+          "peso": 5
+        }
+      ],
+      "garantias": [
+        {
+          "tipo": "Seriedad de la oferta",
+          "monto": "$ 5.000.000",
+          "vigencia": "90 días desde cierre"
+        },
+        {
+          "tipo": "Fiel cumplimiento",
+          "monto": "5% del contrato",
+          "vigencia": "Contrato + 90 días"
+        }
+      ],
+      "contacto": {
+        "nombre": "Abastecimiento SSMO",
+        "email": "licitaciones@ssmo.example.cl"
+      },
+      "documentos": [
+        {
+          "id": "d1",
+          "nombre": "Anexo N°1 · Identificación del oferente",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d2",
+          "nombre": "Anexo N°2 · Declaración jurada de inhabilidades",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d3",
+          "nombre": "Anexo N°3 · Pacto de integridad",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d4",
+          "nombre": "Certificado F30-1 de cumplimiento laboral",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d5",
+          "nombre": "Garantía de seriedad de la oferta (boleta o póliza)",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d6",
+          "nombre": "Anexo N°4 · Propuesta técnica y metodología ITIL",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d7",
+          "nombre": "Anexo N°5 · Experiencia (certificados de clientes)",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d8",
+          "nombre": "CV y certificaciones del equipo propuesto",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d9",
+          "nombre": "Matriz de SLA y plan de transición",
+          "tipo": "Técnico",
+          "obligatorio": false
+        },
+        {
+          "id": "d10",
+          "nombre": "Anexo N°6 · Oferta económica",
+          "tipo": "Económico",
+          "obligatorio": true
+        }
+      ]
+    },
+    {
+      "codigo": "812-77-LQ26",
+      "nombre": "Implementación de centro de operaciones de ciberseguridad (SOC 24/7)",
+      "organismo": "Superintendencia de Pensiones",
+      "unidad": "División de Tecnología",
+      "region": "Metropolitana",
+      "tipo": "LQ",
+      "montoEstimado": 620000000,
+      "duracion": "24 meses",
+      "publicada": "2026-10-15T12:00",
+      "nueva": false,
+      "match": 91,
+      "palabrasClave": [
+        "ciberseguridad",
+        "outsourcing TI"
+      ],
+      "descripcion": "Servicio de monitoreo, detección y respuesta a incidentes de ciberseguridad 24/7, incluyendo SIEM gestionado, threat intelligence, gestión de vulnerabilidades y reportes alineados a la Ley Marco de Ciberseguridad.",
+      "fechas": {
+        "publicacion": "2026-10-15T12:00",
+        "finPreguntas": "2026-10-26T15:00",
+        "respuestas": "2026-10-30T18:00",
+        "cierre": "2026-11-10T15:00",
+        "aperturaTecnica": "2026-11-10T16:00",
+        "aperturaEconomica": "2026-11-17T12:00",
+        "adjudicacion": "2026-12-10T18:00"
+      },
+      "criterios": [
+        {
+          "nombre": "Oferta técnica",
+          "peso": 50
+        },
+        {
+          "nombre": "Precio",
+          "peso": 30
+        },
+        {
+          "nombre": "Certificaciones del equipo",
+          "peso": 15
+        },
+        {
+          "nombre": "Requisitos formales",
+          "peso": 5
+        }
+      ],
+      "garantias": [
+        {
+          "tipo": "Seriedad de la oferta",
+          "monto": "$ 8.000.000",
+          "vigencia": "120 días desde cierre"
+        }
+      ],
+      "contacto": {
+        "nombre": "Compras SP",
+        "email": "compras@spensiones.example.cl"
+      },
+      "documentos": [
+        {
+          "id": "d1",
+          "nombre": "Anexo N°1 · Identificación del oferente",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d2",
+          "nombre": "Anexo N°2 · Declaración jurada de inhabilidades",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d3",
+          "nombre": "Acuerdo de confidencialidad (NDA)",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d4",
+          "nombre": "Garantía de seriedad de la oferta",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d5",
+          "nombre": "Certificación ISO/IEC 27001 vigente",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d6",
+          "nombre": "Propuesta técnica SOC y playbooks de respuesta",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d7",
+          "nombre": "Certificaciones del equipo (CISSP, CEH, etc.)",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d8",
+          "nombre": "Oferta económica",
+          "tipo": "Económico",
+          "obligatorio": true
+        }
+      ]
+    },
+    {
+      "codigo": "5487-112-LE26",
+      "nombre": "Desarrollo y mantención de plataforma web de trámites digitales",
+      "organismo": "Municipalidad de Providencia",
+      "unidad": "Dirección de Innovación",
+      "region": "Metropolitana",
+      "tipo": "LE",
+      "montoEstimado": 85000000,
+      "duracion": "10 meses",
+      "publicada": "2026-10-28T11:00",
+      "nueva": false,
+      "match": 88,
+      "palabrasClave": [
+        "desarrollo de software",
+        "transformación digital"
+      ],
+      "descripcion": "Desarrollo de portal de trámites municipales en línea con integración a ClaveÚnica, pasarela de pagos y backoffice para funcionarios. Incluye mantención evolutiva por 6 meses post puesta en marcha.",
+      "fechas": {
+        "publicacion": "2026-10-28T11:00",
+        "finPreguntas": "2026-11-03T15:00",
+        "respuestas": "2026-11-06T18:00",
+        "cierre": "2026-11-12T15:00",
+        "aperturaTecnica": "2026-11-12T15:30",
+        "adjudicacion": "2026-11-30T18:00"
+      },
+      "criterios": [
+        {
+          "nombre": "Propuesta técnica",
+          "peso": 40
+        },
+        {
+          "nombre": "Precio",
+          "peso": 40
+        },
+        {
+          "nombre": "Plazo de implementación",
+          "peso": 15
+        },
+        {
+          "nombre": "Requisitos formales",
+          "peso": 5
+        }
+      ],
+      "garantias": [],
+      "contacto": {
+        "nombre": "Adquisiciones Providencia",
+        "email": "adquisiciones@providencia.example.cl"
+      },
+      "documentos": [
+        {
+          "id": "d1",
+          "nombre": "Anexo N°1 · Identificación del oferente",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d2",
+          "nombre": "Anexo N°2 · Declaración jurada de inhabilidades",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d3",
+          "nombre": "Propuesta técnica y arquitectura de la solución",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d4",
+          "nombre": "Carta Gantt del proyecto",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d5",
+          "nombre": "Portafolio de proyectos similares",
+          "tipo": "Técnico",
+          "obligatorio": false
+        },
+        {
+          "id": "d6",
+          "nombre": "Anexo N°3 · Oferta económica",
+          "tipo": "Económico",
+          "obligatorio": true
+        }
+      ]
+    },
+    {
+      "codigo": "4410-88-LP26",
+      "nombre": "Servicios de QA y testing automatizado de software",
+      "organismo": "Fondo Nacional de Salud",
+      "unidad": "Subdepartamento de Desarrollo",
+      "region": "Metropolitana",
+      "tipo": "LP",
+      "montoEstimado": 260000000,
+      "duracion": "24 meses",
+      "publicada": "2026-11-04T09:30",
+      "nueva": true,
+      "match": 84,
+      "palabrasClave": [
+        "QA y testing",
+        "desarrollo de software"
+      ],
+      "descripcion": "Servicio de aseguramiento de calidad para sistemas institucionales: pruebas funcionales, automatización de regresión, pruebas de performance y seguridad aplicativa, bajo modalidad de bolsa de horas.",
+      "fechas": {
+        "publicacion": "2026-11-04T09:30",
+        "finPreguntas": "2026-11-09T15:00",
+        "respuestas": "2026-11-11T18:00",
+        "cierre": "2026-11-16T15:00",
+        "aperturaTecnica": "2026-11-17T10:00",
+        "aperturaEconomica": "2026-11-24T10:00",
+        "adjudicacion": "2026-12-15T18:00"
+      },
+      "criterios": [
+        {
+          "nombre": "Oferta técnica",
+          "peso": 45
+        },
+        {
+          "nombre": "Precio",
+          "peso": 40
+        },
+        {
+          "nombre": "Experiencia",
+          "peso": 15
+        }
+      ],
+      "garantias": [
+        {
+          "tipo": "Seriedad de la oferta",
+          "monto": "$ 2.500.000",
+          "vigencia": "90 días desde cierre"
+        }
+      ],
+      "contacto": {
+        "nombre": "Compras FONASA",
+        "email": "compras@fonasa.example.cl"
+      },
+      "documentos": [
+        {
+          "id": "d1",
+          "nombre": "Anexo N°1 · Identificación del oferente",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d2",
+          "nombre": "Anexo N°2 · Declaración jurada de inhabilidades",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d3",
+          "nombre": "Garantía de seriedad de la oferta",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d4",
+          "nombre": "Metodología de testing y herramientas",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d5",
+          "nombre": "Certificados de experiencia (mín. 3)",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d6",
+          "nombre": "CV equipo (ISTQB deseable)",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d7",
+          "nombre": "Oferta económica por perfil (valor hora)",
+          "tipo": "Económico",
+          "obligatorio": true
+        }
+      ]
+    },
+    {
+      "codigo": "1023-58-LP26",
+      "nombre": "Consultoría en arquitectura empresarial y gobierno de datos",
+      "organismo": "Servicio de Impuestos Internos",
+      "unidad": "Subdirección de Informática",
+      "region": "Metropolitana",
+      "tipo": "LP",
+      "montoEstimado": 310000000,
+      "duracion": "8 meses",
+      "publicada": "2026-10-30T10:00",
+      "nueva": false,
+      "match": 82,
+      "palabrasClave": [
+        "consultoría TI",
+        "analítica de datos"
+      ],
+      "descripcion": "Consultoría para definir la arquitectura empresarial objetivo (TOGAF), modelo de gobierno de datos y hoja de ruta de modernización tecnológica a 4 años.",
+      "fechas": {
+        "publicacion": "2026-10-30T10:00",
+        "finPreguntas": "2026-11-06T15:00",
+        "respuestas": "2026-11-10T18:00",
+        "cierre": "2026-11-18T15:00",
+        "aperturaTecnica": "2026-11-19T10:00",
+        "aperturaEconomica": "2026-11-26T10:00",
+        "adjudicacion": "2026-12-18T18:00"
+      },
+      "criterios": [
+        {
+          "nombre": "Oferta técnica",
+          "peso": 55
+        },
+        {
+          "nombre": "Precio",
+          "peso": 30
+        },
+        {
+          "nombre": "Equipo consultor",
+          "peso": 15
+        }
+      ],
+      "garantias": [
+        {
+          "tipo": "Seriedad de la oferta",
+          "monto": "$ 3.000.000",
+          "vigencia": "90 días desde cierre"
+        }
+      ],
+      "contacto": {
+        "nombre": "Departamento de Adquisiciones SII",
+        "email": "adquisiciones@sii.example.cl"
+      },
+      "documentos": [
+        {
+          "id": "d1",
+          "nombre": "Anexo N°1 · Identificación del oferente",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d2",
+          "nombre": "Anexo N°2 · Declaración jurada de inhabilidades",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d3",
+          "nombre": "Anexo N°3 · Pacto de integridad",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d4",
+          "nombre": "Garantía de seriedad de la oferta",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d5",
+          "nombre": "Propuesta metodológica (TOGAF / DAMA)",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d6",
+          "nombre": "CV del equipo consultor",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d7",
+          "nombre": "Plan de trabajo y entregables",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d8",
+          "nombre": "Oferta económica",
+          "tipo": "Económico",
+          "obligatorio": true
+        }
+      ]
+    },
+    {
+      "codigo": "2190-33-LR26",
+      "nombre": "Servicios de outsourcing de profesionales TI (staffing)",
+      "organismo": "Tesorería General de la República",
+      "unidad": "División de Tecnologías",
+      "region": "Metropolitana",
+      "tipo": "LR",
+      "montoEstimado": 1250000000,
+      "duracion": "36 meses",
+      "publicada": "2026-11-05T16:00",
+      "nueva": true,
+      "match": 97,
+      "palabrasClave": [
+        "staffing TI",
+        "outsourcing TI",
+        "desarrollo de software"
+      ],
+      "descripcion": "Contrato marco de provisión de profesionales TI por perfil (desarrolladores, analistas, jefes de proyecto, arquitectos, QA) bajo modalidad de staffing con tarifas por hora y SLA de reemplazo.",
+      "fechas": {
+        "publicacion": "2026-11-05T16:00",
+        "finPreguntas": "2026-11-11T15:00",
+        "respuestas": "2026-11-14T18:00",
+        "cierre": "2026-11-20T15:00",
+        "aperturaTecnica": "2026-11-23T10:00",
+        "aperturaEconomica": "2026-11-30T10:00",
+        "adjudicacion": "2027-01-08T18:00"
+      },
+      "criterios": [
+        {
+          "nombre": "Precio por perfil",
+          "peso": 40
+        },
+        {
+          "nombre": "Oferta técnica",
+          "peso": 35
+        },
+        {
+          "nombre": "Experiencia",
+          "peso": 20
+        },
+        {
+          "nombre": "Requisitos formales",
+          "peso": 5
+        }
+      ],
+      "garantias": [
+        {
+          "tipo": "Seriedad de la oferta",
+          "monto": "$ 12.000.000",
+          "vigencia": "120 días desde cierre"
+        },
+        {
+          "tipo": "Fiel cumplimiento",
+          "monto": "5% del contrato",
+          "vigencia": "Contrato + 90 días"
+        }
+      ],
+      "contacto": {
+        "nombre": "Compras TGR",
+        "email": "compras@tgr.example.cl"
+      },
+      "documentos": [
+        {
+          "id": "d1",
+          "nombre": "Anexo N°1 · Identificación del oferente",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d2",
+          "nombre": "Anexo N°2 · Declaración jurada de inhabilidades",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d3",
+          "nombre": "Anexo N°3 · Pacto de integridad",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d4",
+          "nombre": "Certificado F30-1 de cumplimiento laboral",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d5",
+          "nombre": "Estados financieros últimos 2 años",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d6",
+          "nombre": "Garantía de seriedad de la oferta",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d7",
+          "nombre": "Modelo de reclutamiento y reemplazo",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d8",
+          "nombre": "Certificados de experiencia en staffing",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d9",
+          "nombre": "Programa de integridad / compliance",
+          "tipo": "Técnico",
+          "obligatorio": false
+        },
+        {
+          "id": "d10",
+          "nombre": "Anexo N°6 · Tarifas por perfil",
+          "tipo": "Económico",
+          "obligatorio": true
+        }
+      ]
+    },
+    {
+      "codigo": "3398-21-LE26",
+      "nombre": "Migración de infraestructura de servidores a la nube",
+      "organismo": "Universidad de Valparaíso",
+      "unidad": "Dirección de Tecnologías de la Información",
+      "region": "Valparaíso",
+      "tipo": "LE",
+      "montoEstimado": 140000000,
+      "duracion": "6 meses",
+      "publicada": "2026-11-05T11:00",
+      "nueva": true,
+      "match": 86,
+      "palabrasClave": [
+        "cloud",
+        "transformación digital"
+      ],
+      "descripcion": "Assessment, diseño e implementación de la migración de 60 servidores on-premise a nube pública, con landing zone, respaldo y transferencia de conocimiento al equipo interno.",
+      "fechas": {
+        "publicacion": "2026-11-05T11:00",
+        "finPreguntas": "2026-11-13T15:00",
+        "respuestas": "2026-11-17T18:00",
+        "cierre": "2026-11-25T15:00",
+        "aperturaTecnica": "2026-11-25T16:00",
+        "adjudicacion": "2026-12-14T18:00"
+      },
+      "criterios": [
+        {
+          "nombre": "Propuesta técnica",
+          "peso": 50
+        },
+        {
+          "nombre": "Precio",
+          "peso": 40
+        },
+        {
+          "nombre": "Plazo",
+          "peso": 10
+        }
+      ],
+      "garantias": [],
+      "contacto": {
+        "nombre": "Abastecimiento UV",
+        "email": "abastecimiento@uv.example.cl"
+      },
+      "documentos": [
+        {
+          "id": "d1",
+          "nombre": "Anexo N°1 · Identificación del oferente",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d2",
+          "nombre": "Anexo N°2 · Declaración jurada de inhabilidades",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d3",
+          "nombre": "Propuesta de arquitectura cloud y plan de migración",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d4",
+          "nombre": "Certificación de partner del proveedor cloud",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d5",
+          "nombre": "Oferta económica",
+          "tipo": "Económico",
+          "obligatorio": true
+        }
+      ]
+    },
+    {
+      "codigo": "7710-15-LE26",
+      "nombre": "Desarrollo de app móvil de atención ciudadana con asistente de IA",
+      "organismo": "Gobierno Regional de Valparaíso",
+      "unidad": "División de Planificación",
+      "region": "Valparaíso",
+      "tipo": "LE",
+      "montoEstimado": 95000000,
+      "duracion": "9 meses",
+      "publicada": "2026-11-06T07:30",
+      "nueva": true,
+      "match": 89,
+      "palabrasClave": [
+        "inteligencia artificial",
+        "desarrollo de software",
+        "transformación digital"
+      ],
+      "descripcion": "Diseño y desarrollo de aplicación móvil (iOS/Android) con asistente conversacional basado en IA generativa para orientar a la ciudadanía en programas y fondos regionales.",
+      "fechas": {
+        "publicacion": "2026-11-06T07:30",
+        "finPreguntas": "2026-11-16T15:00",
+        "respuestas": "2026-11-19T18:00",
+        "cierre": "2026-11-27T15:00",
+        "aperturaTecnica": "2026-11-27T16:00",
+        "adjudicacion": "2026-12-16T18:00"
+      },
+      "criterios": [
+        {
+          "nombre": "Propuesta técnica",
+          "peso": 45
+        },
+        {
+          "nombre": "Precio",
+          "peso": 35
+        },
+        {
+          "nombre": "Experiencia en IA",
+          "peso": 20
+        }
+      ],
+      "garantias": [],
+      "contacto": {
+        "nombre": "Compras GORE",
+        "email": "compras@gorevalparaiso.example.cl"
+      },
+      "documentos": [
+        {
+          "id": "d1",
+          "nombre": "Anexo N°1 · Identificación del oferente",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d2",
+          "nombre": "Anexo N°2 · Declaración jurada de inhabilidades",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d3",
+          "nombre": "Propuesta técnica, UX y arquitectura IA",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d4",
+          "nombre": "Política de privacidad y tratamiento de datos",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d5",
+          "nombre": "Portafolio de apps publicadas",
+          "tipo": "Técnico",
+          "obligatorio": false
+        },
+        {
+          "id": "d6",
+          "nombre": "Oferta económica",
+          "tipo": "Económico",
+          "obligatorio": true
+        }
+      ]
+    },
+    {
+      "codigo": "3011-7-LE26",
+      "nombre": "Mesa de servicios TI para red de bibliotecas públicas",
+      "organismo": "Servicio Nacional del Patrimonio Cultural",
+      "unidad": "Departamento de Informática",
+      "region": "Nacional",
+      "tipo": "LE",
+      "montoEstimado": 72000000,
+      "duracion": "24 meses",
+      "publicada": "2026-10-29T09:00",
+      "nueva": false,
+      "match": 74,
+      "palabrasClave": [
+        "mesa de ayuda",
+        "soporte TI"
+      ],
+      "descripcion": "Soporte remoto y en terreno para 120 bibliotecas públicas en 14 regiones del país.",
+      "fechas": {
+        "publicacion": "2026-10-29T09:00",
+        "finPreguntas": "2026-11-04T15:00",
+        "respuestas": "2026-11-07T18:00",
+        "cierre": "2026-11-14T15:00",
+        "aperturaTecnica": "2026-11-14T16:00",
+        "adjudicacion": "2026-12-02T18:00"
+      },
+      "criterios": [
+        {
+          "nombre": "Precio",
+          "peso": 50
+        },
+        {
+          "nombre": "Cobertura regional",
+          "peso": 35
+        },
+        {
+          "nombre": "Experiencia",
+          "peso": 15
+        }
+      ],
+      "garantias": [],
+      "contacto": {
+        "nombre": "Compras SNPC",
+        "email": "compras@patrimonio.example.cl"
+      },
+      "documentos": [
+        {
+          "id": "d1",
+          "nombre": "Anexo N°1 · Identificación del oferente",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d2",
+          "nombre": "Anexo N°2 · Declaración jurada de inhabilidades",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d3",
+          "nombre": "Plan de cobertura regional",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d4",
+          "nombre": "Oferta económica",
+          "tipo": "Económico",
+          "obligatorio": true
+        }
+      ]
+    },
+    {
+      "codigo": "2290-64-LR26",
+      "nombre": "Soporte y mantención evolutiva de sistemas legados",
+      "organismo": "Servicio de Registro Civil e Identificación",
+      "unidad": "Subdirección de Tecnologías",
+      "region": "Metropolitana",
+      "tipo": "LR",
+      "montoEstimado": 980000000,
+      "duracion": "36 meses",
+      "publicada": "2026-10-01T10:00",
+      "nueva": false,
+      "match": 90,
+      "palabrasClave": [
+        "soporte TI",
+        "desarrollo de software",
+        "outsourcing TI"
+      ],
+      "descripcion": "Mantención correctiva y evolutiva de sistemas core desarrollados en Java y Oracle Forms, incluyendo plan de modernización gradual.",
+      "fechas": {
+        "publicacion": "2026-10-01T10:00",
+        "finPreguntas": "2026-10-14T15:00",
+        "respuestas": "2026-10-20T18:00",
+        "cierre": "2026-11-03T15:00",
+        "aperturaTecnica": "2026-11-04T10:00",
+        "aperturaEconomica": "2026-11-12T10:00",
+        "adjudicacion": "2026-12-11T18:00"
+      },
+      "criterios": [
+        {
+          "nombre": "Oferta técnica",
+          "peso": 50
+        },
+        {
+          "nombre": "Precio",
+          "peso": 35
+        },
+        {
+          "nombre": "Experiencia",
+          "peso": 15
+        }
+      ],
+      "garantias": [
+        {
+          "tipo": "Seriedad de la oferta",
+          "monto": "$ 10.000.000",
+          "vigencia": "120 días desde cierre"
+        }
+      ],
+      "contacto": {
+        "nombre": "Compras SRCeI",
+        "email": "compras@registrocivil.example.cl"
+      },
+      "documentos": [
+        {
+          "id": "d1",
+          "nombre": "Anexo N°1 · Identificación del oferente",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d2",
+          "nombre": "Anexo N°2 · Declaración jurada de inhabilidades",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d3",
+          "nombre": "Garantía de seriedad de la oferta",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d4",
+          "nombre": "Propuesta técnica y plan de modernización",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d5",
+          "nombre": "Certificados de experiencia",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d6",
+          "nombre": "Oferta económica",
+          "tipo": "Económico",
+          "obligatorio": true
+        }
+      ]
+    },
+    {
+      "codigo": "1600-40-LP26",
+      "nombre": "Automatización robótica de procesos (RPA) para trámites internos",
+      "organismo": "Dirección del Trabajo",
+      "unidad": "Departamento de Tecnologías",
+      "region": "Metropolitana",
+      "tipo": "LP",
+      "montoEstimado": 210000000,
+      "duracion": "12 meses",
+      "publicada": "2026-09-10T10:00",
+      "nueva": false,
+      "match": 87,
+      "palabrasClave": [
+        "RPA",
+        "transformación digital"
+      ],
+      "descripcion": "Levantamiento, desarrollo y operación de 12 robots RPA para procesos de backoffice.",
+      "fechas": {
+        "publicacion": "2026-09-10T10:00",
+        "finPreguntas": "2026-09-22T15:00",
+        "respuestas": "2026-09-29T18:00",
+        "cierre": "2026-10-08T15:00",
+        "aperturaTecnica": "2026-10-09T10:00",
+        "aperturaEconomica": "2026-10-16T10:00",
+        "adjudicacion": "2026-11-02T18:00"
+      },
+      "criterios": [
+        {
+          "nombre": "Oferta técnica",
+          "peso": 50
+        },
+        {
+          "nombre": "Precio",
+          "peso": 40
+        },
+        {
+          "nombre": "Experiencia",
+          "peso": 10
+        }
+      ],
+      "garantias": [
+        {
+          "tipo": "Fiel cumplimiento",
+          "monto": "5% del contrato",
+          "vigencia": "Contrato + 60 días"
+        }
+      ],
+      "contacto": {
+        "nombre": "Compras DT",
+        "email": "compras@dt.example.cl"
+      },
+      "documentos": [
+        {
+          "id": "d1",
+          "nombre": "Anexo N°1 · Identificación del oferente",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d2",
+          "nombre": "Anexo N°2 · Declaración jurada de inhabilidades",
+          "tipo": "Administrativo",
+          "obligatorio": true
+        },
+        {
+          "id": "d3",
+          "nombre": "Propuesta técnica RPA",
+          "tipo": "Técnico",
+          "obligatorio": true
+        },
+        {
+          "id": "d4",
+          "nombre": "Oferta económica",
+          "tipo": "Económico",
+          "obligatorio": true
+        }
+      ]
+    }
+  ],
+  "demoSeguimiento": {
+    "1509-45-LP26": {
+      "estado": "preparacion",
+      "responsable": "camila.rojas@sermaluc.cl",
+      "docs": [
+        "d1",
+        "d2",
+        "d3",
+        "d4",
+        "d6",
+        "d7"
+      ],
+      "notas": [
+        {
+          "autor": "camila.rojas@sermaluc.cl",
+          "fecha": "2026-11-04T17:20",
+          "texto": "Boleta de garantía solicitada al banco, llega el lunes a primera hora."
+        }
+      ]
+    },
+    "812-77-LQ26": {
+      "estado": "preparacion",
+      "responsable": "felipe.araya@sermaluc.cl",
+      "docs": [
+        "d1",
+        "d2",
+        "d5"
+      ],
+      "notas": [
+        {
+          "autor": "felipe.araya@sermaluc.cl",
+          "fecha": "2026-11-05T12:10",
+          "texto": "Falta reunir certificaciones CISSP de 2 especialistas."
+        }
+      ]
+    },
+    "5487-112-LE26": {
+      "estado": "evaluacion",
+      "responsable": "matias.fuentes@sermaluc.cl",
+      "docs": [],
+      "notas": []
+    },
+    "1023-58-LP26": {
+      "estado": "evaluacion",
+      "responsable": "valentina.soto@sermaluc.cl",
+      "docs": [],
+      "notas": []
+    },
+    "2290-64-LR26": {
+      "estado": "presentada",
+      "responsable": "camila.rojas@sermaluc.cl",
+      "docs": [
+        "d1",
+        "d2",
+        "d3",
+        "d4",
+        "d5",
+        "d6"
+      ],
+      "notas": []
+    },
+    "1600-40-LP26": {
+      "estado": "adjudicada",
+      "responsable": "valentina.soto@sermaluc.cl",
+      "docs": [
+        "d1",
+        "d2",
+        "d3",
+        "d4"
+      ],
+      "notas": []
+    },
+    "3011-7-LE26": {
+      "estado": "descartada",
+      "responsable": "ignacia.morales@sermaluc.cl",
+      "docs": [],
+      "notas": [
+        {
+          "autor": "ignacia.morales@sermaluc.cl",
+          "fecha": "2026-11-03T09:40",
+          "texto": "Descartada: exige presencia técnica en 14 regiones, sin cobertura propia."
+        }
+      ]
+    }
+  }
+}

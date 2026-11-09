@@ -1,0 +1,25 @@
+# Proxy HTTPS de Atalaya. Caddy obtiene y renueva solo el certificado TLS (Let's Encrypt)
+# para el dominio de DOMINIO (el DNS debe apuntar a este servidor y los puertos 80/443 estar abiertos).
+# Si Sermaluc usa un certificado propio, agregue dentro del bloque:  tls /ruta/cert.pem /ruta/key.pem
+# (y monte esos archivos en el servicio caddy de docker-compose.yml).
+{$DOMINIO} {
+	encode zstd gzip
+
+	request_body {
+		max_size 30MB
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+
+	reverse_proxy atalaya:8080 {
+		header_up X-Forwarded-Proto {scheme}
+	}
+
+	log {
+		output stdout
+		format json
+	}
+}

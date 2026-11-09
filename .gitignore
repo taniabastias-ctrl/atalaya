@@ -1,0 +1,10 @@
+node_modules/
+datos/
+.env
+.wrangler/
+.secretos-produccion.json
+respaldos/
+instalacion/datos/
+instalacion/.env
+instalacion/agente.env
+presentacion/
