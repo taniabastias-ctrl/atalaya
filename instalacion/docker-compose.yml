@@ -47,7 +47,7 @@ services:
   agente:
     profiles: ["agente"]
     build:
-      context: ${AGENTE_DIR:-../../MPbl/mercado_publico_agent}
+      context: ../agente                 # código del agente (carpeta agente/ de este repositorio)
       dockerfile_inline: |
         FROM python:3.12-slim
         ENV TZ=America/Santiago PYTHONUNBUFFERED=1

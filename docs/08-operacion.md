@@ -82,7 +82,7 @@ npm test
 
 `servidor/pruebas.mjs` levanta la API sobre una base SQLite en memoria y un almacén de archivos temporal, y ejecuta 70 pruebas de punta a punta: activación (solo `@sermaluc.cl`, registrados, sin reactivar) e ingreso; modelo relacional sin claves foráneas rotas; estados, responsables y checklist; subida, descarga y borrado de archivos (incluido el rechazo de tipos no permitidos); carga de reportes del agente (conserva el trabajo del equipo, rechaza reportes inválidos); palabras clave y token del agente; usuarios; ingreso con Google (PKCE, dominio, `state` manipulado, tokens de otra aplicación); enlace directo a adjuntos; registro de actividad (sin guardar contraseñas); línea pública sin datos sensibles; CSRF y cierre de sesión.
 
-El agente tiene sus propias pruebas (`pytest -q` en su repositorio, 43 pruebas).
+El agente tiene sus propias pruebas (`cd agente && pytest -q`, 43 pruebas). Ambas se ejecutan solas en GitHub Actions con cada cambio (`.github/workflows/pruebas.yml`).
 
 ## Tareas administrativas frecuentes
 

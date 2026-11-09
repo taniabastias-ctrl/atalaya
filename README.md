@@ -54,6 +54,8 @@ site/        Interfaz (HTML, CSS y JS sin frameworks)
 servidor/    server.mjs (HTTP + estáticos), worker.mjs (Cloudflare), api.mjs (API), schema.sql,
              db-sqlite.mjs y archivos-disco.mjs (servidor propio), migraciones/, pruebas.mjs (npm test)
 scripts/     enviar-reporte.mjs, exportar-desde-cloudflare.mjs, crear-base.mjs, generar-secretos.mjs, respaldar.mjs
+agente/      Agente de licitaciones (Python): consulta Mercado Público, envía el correo y publica en Atalaya
+.github/     Flujo diario del agente y pruebas automáticas
 instalacion/ Docker Compose, Caddy y plantillas para instalar en servidores de Sermaluc
 docs/        Documentación técnica
 data/        demo.json (datos de demostración)

@@ -1,5 +1,8 @@
 # Agente de licitaciones Mercado Público (Sermaluc)
 
+> Desde 2026-11-09 este agente vive en la carpeta `agente/` del repositorio privado taniabastias-ctrl/atalaya
+> (junto con la plataforma). El workflow está en `.github/workflows/licitaciones.yml` de la raíz.
+
 ## Objetivo
 Agente que revisa diariamente las licitaciones PUBLICADAS en Mercado Público (Chile), las filtra por
 palabras clave TI y entrega un Excel con listado + resumen. Uso: detección de oportunidades comerciales

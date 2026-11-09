@@ -24,4 +24,4 @@ Atalaya es la plataforma web donde el equipo comercial de Sermaluc ve, reparte y
 | Frontend | HTML + CSS + JavaScript sin frameworks ni compilación. |
 | Autenticación | Contraseña (PBKDF2) o Google OAuth 2.0 / OpenID Connect, solo cuentas `@sermaluc.cl` registradas. |
 | Pruebas | `npm test` (70 pruebas de integración de la API sobre SQLite en memoria). |
-| Agente | Python (repositorio `licitaciones-mp`), publica con `POST /api/reporte` y token propio. |
+| Agente | Python, en la carpeta `agente/` de este repositorio; publica con `POST /api/reporte` y token propio. |

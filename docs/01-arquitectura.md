@@ -19,7 +19,7 @@ flowchart LR
   API -->|lee la ficha para<br/>obtener el enlace de adjuntos| MPW[mercadopublico.cl]
 ```
 
-- **El agente** (repositorio `licitaciones-mp`) consulta cada día hábil la API de Mercado Público, puntúa las licitaciones con las palabras clave que descarga de Atalaya, envía el correo y publica el reporte en Atalaya.
+- **El agente** (carpeta `agente/`) consulta cada día hábil la API de Mercado Público, puntúa las licitaciones con las palabras clave que descarga de Atalaya, envía el correo y publica el reporte en Atalaya.
 - **La API** recibe el reporte, lo normaliza en el modelo relacional y conserva el trabajo del equipo (estado, responsable, documentos, notas) aunque la licitación vuelva a llegar.
 - **La interfaz** muestra radar, listado, ficha, tablero, equipo y configuración. Se actualiza sola cada 15 segundos si alguien cambió algo.
 - **La línea de tiempo pública** (`/linea/`) muestra la "carrera" de licitaciones sin necesidad de ingresar, sin correos ni montos.
@@ -66,6 +66,8 @@ scripts/
   crear-base.mjs            Crea la base SQLite y carga los datos exportados
   generar-secretos.mjs      Genera instalacion/.env con secretos nuevos
   respaldar.mjs             Respaldo en caliente de base y archivos
+agente/                     Agente de licitaciones en Python (consulta, Excel, correo, publicación) y su disparador
+.github/workflows/          Flujo diario del agente y pruebas automáticas
 instalacion/                Paquete de instalación en servidores de Sermaluc (Docker Compose, Caddy, plantillas .env)
 Dockerfile                  Imagen de Atalaya (Node 24, usuario sin privilegios)
 data/demo.json              Datos de demostración (DEMO=1)

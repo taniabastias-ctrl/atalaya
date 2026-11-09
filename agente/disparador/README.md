@@ -6,17 +6,17 @@ hora de Chile. Ajusta solo el cambio de horario de verano/invierno.
 
 ## Publicar / actualizar
 ```powershell
-cd disparador
+cd agente/disparador
 npx wrangler deploy
 ```
 
 ## Token de GitHub (una sola vez, o cuando venza)
 1. https://github.com/settings/personal-access-tokens/new (fine-grained token)
-   - Repository access: **Only select repositories** → `licitaciones-mp`
+   - Repository access: **Only select repositories** → `atalaya` (antes `licitaciones-mp`)
    - Permissions → Repository → **Actions: Read and write** (nada más)
 2. Cargarlo en el Worker:
 ```powershell
-cd disparador
+cd agente/disparador
 npx wrangler secret put GITHUB_TOKEN
 ```
 

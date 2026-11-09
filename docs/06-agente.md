@@ -1,6 +1,16 @@
 # 06 · Integración con el agente de licitaciones
 
-El agente es un programa en Python (repositorio GitHub `taniabastias-ctrl/licitaciones-mp`, carpeta local `MPbl/mercado_publico_agent`). Atalaya no consulta Mercado Público por su cuenta: recibe lo que el agente publica.
+El agente es un programa en Python que vive en la carpeta [`agente/`](../agente) de este mismo repositorio (antes estaba en el repositorio `taniabastias-ctrl/licitaciones-mp`, cuyo historial se conservó). Atalaya no consulta Mercado Público por su cuenta: recibe lo que el agente publica.
+
+| Ruta | Contenido |
+|---|---|
+| `agente/mp_agent.py` | Consulta la API, puntúa, arma el Excel y orquesta la ejecución. |
+| `agente/atalaya.py` | Descarga las palabras clave y publica el reporte en Atalaya. |
+| `agente/enviar_correo.py` | Envío del correo diario por SMTP. |
+| `agente/tests/` | 43 pruebas (`pytest -q`). |
+| `agente/disparador/` | Worker de Cloudflare que lanza el flujo a las 06:30 de Chile. |
+| `.github/workflows/licitaciones.yml` | Flujo diario del agente en GitHub Actions. |
+| `.github/workflows/pruebas.yml` | Pruebas de la plataforma y del agente en cada cambio. |
 
 ## Ciclo diario
 
@@ -37,9 +47,19 @@ sequenceDiagram
 
 ## Dónde se programa hoy
 
-- El flujo de GitHub Actions del repositorio del agente se ejecuta con `workflow_dispatch`.
-- Lo dispara un Worker de Cloudflare ("disparador", carpeta `disparador/` del repositorio del agente) a la hora programada.
-- `ATALAYA_URL` y `ATALAYA_TOKEN` son secretos del repositorio en GitHub.
+- El flujo de GitHub Actions se ejecuta con `workflow_dispatch`; GitHub no es puntual con sus horarios programados.
+- Lo dispara un Worker de Cloudflare ("disparador", `agente/disparador/`) a las 06:30 de Chile, días hábiles.
+- `MP_TICKET`, `SMTP_*`, `MAIL_*`, `ATALAYA_URL` y `ATALAYA_TOKEN` son secretos del repositorio en GitHub.
+- **Mientras no se haga el cambio de abajo, la ejecución diaria sigue corriendo desde el repositorio anterior `licitaciones-mp`**, que tiene los secretos cargados.
+
+## Pasar la ejecución diaria a este repositorio
+
+1. En GitHub, repositorio `atalaya` → Settings → Secrets and variables → Actions: cree los mismos secretos que tiene `licitaciones-mp` (`MP_TICKET`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_TO`, `MAIL_FROM`, `ATALAYA_TOKEN` y, si se usa, `ATALAYA_URL`). GitHub no permite leer ni copiar secretos: hay que ingresarlos de nuevo.
+2. Edite el token fino de GitHub que usa el disparador para que tenga acceso al repositorio `atalaya` (Actions: Read and write), o cree uno nuevo y cárguelo con `npx wrangler secret put GITHUB_TOKEN` en `agente/disparador`.
+3. Para no repetir en el correo licitaciones ya enviadas, actualice `agente/vistos_inicial.json` con el `vistos.json` más reciente (la caché de Actions no se traspasa entre repositorios).
+4. Lance a mano el flujo "Licitaciones TI diarias" desde la pestaña Actions de `atalaya` y revise el correo y Atalaya.
+5. Publique el disparador (`cd agente/disparador && npx wrangler deploy`): ahora lanza el flujo de `atalaya` (`GITHUB_REPO` en `wrangler.toml`).
+6. Archive el repositorio `licitaciones-mp` (Settings → Archive) para que quede solo como historial.
 
 **Importante para desacoplarse de Cloudflare:** el disparador también vive en Cloudflare. Al migrar hay que elegir otro programador (ver [instalación, paso 7](07-instalacion-servidor-propio.md#paso-7--agente-de-licitaciones)): el servicio `agente` incluido en Docker Compose, un `cron` del servidor o un `schedule` de GitHub Actions.
 

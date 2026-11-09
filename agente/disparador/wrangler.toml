@@ -7,6 +7,12 @@ compatibility_date = "2026-10-01"
 [triggers]
 crons = ["30 9 * * 1-5", "30 10 * * 1-5"]
 
+# Repositorio cuyo workflow "licitaciones.yml" se lanza. El agente ahora vive en agente/ del repo atalaya.
+# Publicar este cambio (npx wrangler deploy) SOLO después de copiar los secrets del agente al repo atalaya
+# y de dar al GITHUB_TOKEN acceso a ese repo. Ver docs/06-agente.md, "Pasar a un solo repositorio".
+[vars]
+GITHUB_REPO = "taniabastias-ctrl/atalaya"
+
 [observability]
 enabled = true
 

@@ -130,12 +130,12 @@ docker compose up -d
 
 El programador actual del agente es un Worker de Cloudflare ("disparador"), así que para quedar sin Cloudflare elija **una** de estas opciones:
 
-**A. Agente dentro del servidor (recomendado para desacoplarse por completo).** Copie la carpeta del agente (`mercado_publico_agent`) al servidor, por ejemplo en `/opt/mercado_publico_agent`, y:
+**A. Agente dentro del servidor (recomendado para desacoplarse por completo).** El código ya viene en la carpeta `agente/` del repositorio:
 
 ```bash
 cd /opt/atalaya/instalacion
 cp agente.env.example agente.env && chmod 600 agente.env     # complete MP_TICKET, ATALAYA_TOKEN (= AGENT_TOKEN), SMTP_* y MAIL_*
-AGENTE_DIR=/opt/mercado_publico_agent docker compose --profile agente up -d --build
+docker compose --profile agente up -d --build
 docker compose logs -f agente                                  # muestra "Próxima ejecución: ..."
 ```
 
@@ -147,7 +147,7 @@ docker compose run --rm agente python mp_agent.py --dias 1 --min-score 3 --out /
 
 Luego deshabilite el flujo de GitHub Actions y el Worker "disparador" para que no corra dos veces.
 
-**B. Seguir usando GitHub Actions.** En el repositorio del agente, actualice los secretos `ATALAYA_URL` (`https://atalaya.sermaluc.cl`) y `ATALAYA_TOKEN` (el `AGENT_TOKEN` nuevo), y reemplace el disparador de Cloudflare por un `schedule` de GitHub Actions (por ejemplo `cron: "30 9 * * 1-5"`, que en UTC equivale a las 06:30 de Chile en horario de verano).
+**B. Seguir usando GitHub Actions.** En el repositorio `atalaya` (flujo `.github/workflows/licitaciones.yml`), actualice los secretos `ATALAYA_URL` (`https://atalaya.sermaluc.cl`) y `ATALAYA_TOKEN` (el `AGENT_TOKEN` nuevo), y reemplace el disparador de Cloudflare por un `schedule` de GitHub Actions (por ejemplo `cron: "30 9 * * 1-5"`, que en UTC equivale a las 06:30 de Chile en horario de verano).
 
 ## Paso 8 · Cambio definitivo y desconexión de Cloudflare
 
