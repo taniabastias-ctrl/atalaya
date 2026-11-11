@@ -11,7 +11,7 @@ Es una plataforma independiente, con identidad, interfaz y servidor propios.
 | **Radar** | Radar animado donde cada punto es una licitación abierta. Mientras más cerca del centro, menos días quedan para el cierre. Incluye resumen del día, cuenta regresiva, novedades del último reporte, hitos de la semana y palabras clave. |
 | **Licitaciones** | Tabla con filtros por estado, responsable, palabra clave y urgencia. |
 | **Ficha** | Reloj en vivo hasta el cierre de ofertas (días, horas, minutos y segundos). Incluye estado, responsable, resumen, documentación, fechas importantes y bitácora del equipo. |
-| **Documentación** | Subida de bases y anexos (arrastrando o eligiendo archivos, hasta 25 MB cada uno) y documentos preparados adjuntos a cada ítem del checklist. El equipo puede agregar ítems al checklist según lo que pidan las bases. |
+| **Documentación** | Subida de bases y anexos (arrastrando o eligiendo archivos, hasta 25 MB cada uno) y documentos preparados adjuntos a cada ítem del checklist. El equipo puede agregar ítems al checklist según lo que pidan las bases. Al final del checklist, **"Descargar todos (ZIP)"** exporta en un solo archivo los documentos adjuntos a cada ítem, con una carpeta por documento y un índice. |
 | **Tablero** | Una tarjeta por licitación con su estado (editable en la misma tarjeta) y un reloj en vivo con días, horas, minutos y segundos hasta el cierre. Se filtra por estado. |
 | **Equipo** | Carga de trabajo de cada persona y su próximo cierre. |
 | **Configuración** | **Palabras clave** que usa el agente (suman o restan puntaje; se pueden agregar, pausar, cambiar de peso o eliminar). **Usuarios** (crear, editar rol y cargo, restablecer acceso, eliminar). **Registro de actividad**: todo lo que se hace en Atalaya, con usuario, fecha y una frase legible, y el detalle técnico detrás del botón "Detalle técnico". Todo el equipo puede ver la configuración y el registro; solo la administración puede modificarlos. |
@@ -19,6 +19,8 @@ Es una plataforma independiente, con identidad, interfaz y servidor propios.
 **Carrera de licitaciones (pública):** desde la pantalla de ingreso, el botón "🏇 Ver la carrera de licitaciones" abre `/linea/` sin necesidad de ingresar: cada licitación es un carril donde un caballito avanza desde la publicación hasta el cierre, con la persona asignada. No muestra correos, montos ni documentos.
 
 **Alertas:** colores según los días que faltan (rojo: 2 días o menos; naranja: 5 o menos; azul: 10 o menos). Además hay una campana con los plazos, una franja del agente con las licitaciones que cierran en menos de 48 h y un aviso al ingresar. También se advierte cuando una licitación no tiene responsable o le faltan documentos obligatorios.
+
+**Avisos por correo:** cuando se asigna una licitación, la persona asignada recibe un correo con la ficha resumida y el plazo; cuando alguien agrega una nota, la nota llega por correo a todo el equipo (los usuarios @sermaluc.cl registrados en Atalaya). Los correos tienen el diseño de Atalaya y se configuran en **Configuración → Notificaciones**.
 
 **Trabajo compartido:** el estado, el responsable, los documentos y las notas se guardan en el servidor. Cada navegador revisa si hay cambios cada 15 segundos y se actualiza solo.
 

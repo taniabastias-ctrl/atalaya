@@ -834,3 +834,27 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font
 }
 .race-btn { height: 48px; font-size: 14px; border-color: var(--line-strong); }
 .race-btn span { font-weight: 600; color: var(--muted); font-size: 12.5px; }
+
+/* ---------- Configuración · Notificaciones por correo ---------- */
+.ntf-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.ntf-estado.on { border-left: 4px solid var(--green); }
+.ntf-estado.off { border-left: 4px solid var(--amber); }
+.ntf-estado .btn { margin-top: 10px; }
+.ntf-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+.ntf { display: flex; gap: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+.ntf-i { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--signal-soft); color: var(--signal); }
+.ntf-i svg { width: 20px; height: 20px; }
+.ntf b { display: block; font-size: 15px; font-weight: 800; }
+.ntf small { display: block; font-size: 12px; font-weight: 700; color: var(--signal); margin: 2px 0 6px; }
+.ntf p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--muted); }
+.ntf-people { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; padding: 16px 18px; }
+@media (max-width: 900px) { .ntf-grid { grid-template-columns: 1fr; } }
+
+/* ---------- Ficha · exportar los documentos del checklist ---------- */
+.export-docs { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 18px 0 6px; padding: 16px 18px; border: 1px solid var(--line); border-left: 4px solid var(--signal); border-radius: 14px; background: var(--signal-soft); }
+.export-docs.off { background: var(--paper); border-left-color: var(--line-strong); }
+.export-docs b { display: flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 800; }
+.export-docs b svg { width: 17px; height: 17px; color: var(--signal); }
+.export-docs small { display: block; margin-top: 3px; font-size: 12.5px; color: var(--muted); }
+.export-docs .btn[disabled] { opacity: .5; cursor: not-allowed; }
+@media (max-width: 680px) { .export-docs .btn { width: 100%; justify-content: center; } }

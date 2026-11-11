@@ -28,7 +28,7 @@ flowchart LR
 - 1 vCPU, 1 GB de RAM y 10 GB de disco son suficientes (la base pesa menos de 1 MB hoy; los archivos subidos son lo que más crece).
 - Un nombre DNS (por ejemplo `atalaya.sermaluc.cl`) con registro A/AAAA apuntando a la IP pública del servidor.
 - Puertos **80 y 443** abiertos desde internet (80 solo lo usa Caddy para el certificado y redirigir a HTTPS).
-- Salida a internet hacia `www.mercadopublico.cl` (botón de adjuntos), `oauth2.googleapis.com` y `www.googleapis.com` (ingreso con Google) y, si se usa el agente en el servidor, `api.mercadopublico.cl` y el servidor SMTP.
+- Salida a internet hacia el servidor de correo por el puerto 465 (avisos por correo), `www.mercadopublico.cl` (botón de adjuntos), `oauth2.googleapis.com` y `www.googleapis.com` (ingreso con Google) y, si se usa el agente en el servidor, `api.mercadopublico.cl` y el servidor SMTP.
 
 > Si Sermaluc usa un balanceador o un proxy corporativo con su propio certificado, se puede omitir Caddy: publique el puerto 8080 del servicio `atalaya` solo hacia ese balanceador y configure que envíe `X-Forwarded-Proto: https` y `X-Forwarded-For`.
 
@@ -72,6 +72,8 @@ Crea `instalacion/.env` con `DOMINIO`, un `SESSION_SECRET` nuevo y un `AGENT_TOK
 | `ADMIN_EMAILS` | `tania.bastias@sermaluc.cl` (separe con comas si son varios). |
 | `ALLOWED_DOMAIN` | `sermaluc.cl` |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Ver paso 6 (opcional, recomendado). |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_FROM` | Avisos por correo (opcional). Con Google Workspace: `smtp.gmail.com`, `465`, la cuenta que envía y una contraseña de aplicación. |
+| `APP_URL` | Dirección pública para los enlaces de los correos, por ejemplo `https://atalaya.sermaluc.cl`. |
 | `LOG` | `1` para registrar cada petición en la consola. |
 
 Proteja el archivo: `chmod 600 instalacion/.env`.

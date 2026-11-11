@@ -94,6 +94,7 @@ El agente tiene sus propias pruebas (`cd agente && pytest -q`, 43 pruebas). Amba
 | Agregar una administradora permanente | `ADMIN_EMAILS` en `instalacion/.env` + `docker compose up -d`. |
 | Rotar el token del agente | Cambie `AGENT_TOKEN` en `instalacion/.env`, reinicie, y actualice `ATALAYA_TOKEN` del agente. |
 | Cerrar todas las sesiones | Cambie `SESSION_SECRET` y reinicie. |
+| Activar o cambiar la cuenta que envía los avisos | Cloudflare: `npx wrangler secret put SMTP_USER` y `npx wrangler secret put SMTP_PASSWORD`. Servidor propio: `SMTP_*` en `instalacion/.env` y `docker compose up -d`. |
 
 ## Solución de problemas
 
@@ -106,4 +107,6 @@ El agente tiene sus propias pruebas (`cd agente && pytest -q`, 43 pruebas). Amba
 | Google devuelve "redirect_uri_mismatch" | Falta el URI `https://<dominio>/api/auth/google/callback` en Google Cloud. |
 | "Abrir adjuntos" lleva a la ficha y no a los adjuntos | El servidor no logra salir a `www.mercadopublico.cl` o Mercado Público no respondió en 10 s. |
 | Error 413 al subir un archivo | Supera 25 MB. |
+| No llegan los avisos por correo | Revisar **Configuración → Notificaciones** (debe decir "Correo activo") y usar "Enviarme un correo de prueba". En el registro de actividad, buscar "correo": los envíos fallidos muestran el motivo. Con Gmail, `535` significa usuario o contraseña de aplicación incorrectos. |
+| Los avisos caen en spam | Pedir a TI que la cuenta remitente tenga SPF/DKIM del dominio (en Google Workspace ya vienen) y agregarla como contacto. |
 | Los cambios de diseño no se ven | Falta subir `?v=N` en `site/index.html` o el navegador tiene caché; recargar con Ctrl+F5. |

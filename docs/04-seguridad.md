@@ -60,6 +60,14 @@ Solo `/api/publico/linea`: código, nombre, organismo, estado, fechas y **nombre
 
 Cada acción relevante (ingresos y salidas, intentos fallidos, activaciones, cambios de estado y responsable, documentos, notas, archivos, palabras clave, usuarios, cargas del agente) queda en la tabla `auditoria` con fecha, usuario, una frase legible y un detalle técnico (método, ruta, código de respuesta, IP, navegador, duración y datos antes/después). Lo puede leer todo el equipo en **Configuración → Registro de actividad**; nadie puede modificarlo desde la interfaz.
 
+## Correos
+
+- Se envían por SMTP con **TLS directo (puerto 465)** desde la cuenta de `SMTP_USER`; la contraseña (`SMTP_PASSWORD`, idealmente una contraseña de aplicación de Google) es un secreto y nunca se registra.
+- Solo se escribe a usuarios registrados en Atalaya con correo del dominio permitido (`@sermaluc.cl`).
+- Las direcciones y el asunto se limpian de saltos de línea (sin inyección de cabeceras ni comandos SMTP) y todo el texto del usuario (por ejemplo, las notas) se escapa antes de insertarlo en el HTML.
+- Un fallo del correo nunca impide guardar la nota o la asignación: el error queda en el registro de actividad.
+- El contenido de las notas viaja por correo: no escriba en ellas información que no deba salir de Atalaya.
+
 ## Secretos
 
 | Secreto | Dónde vive | Notas |
@@ -67,6 +75,7 @@ Cada acción relevante (ingresos y salidas, intentos fallidos, activaciones, cam
 | `SESSION_SECRET` | Secreto de Wrangler / `instalacion/.env` | 64 caracteres hex aleatorios. |
 | `AGENT_TOKEN` | Secreto de Wrangler / `instalacion/.env` | Mismo valor que `ATALAYA_TOKEN` del agente. |
 | `GOOGLE_CLIENT_SECRET` | Secreto de Wrangler / `instalacion/.env` | Desde Google Cloud Console. |
+| `SMTP_USER`, `SMTP_PASSWORD` | Secreto de Wrangler / `instalacion/.env` | Cuenta que envía los avisos y su contraseña de aplicación. |
 | `TEAM_KEY` | Secreto de Wrangler (Cloudflare) | **Ya no se usa.** Se puede borrar con `npx wrangler secret delete TEAM_KEY`. |
 
 `instalacion/.env`, `instalacion/agente.env`, `.secretos-produccion.json` e `instalacion/datos/` están excluidos de git y de la imagen Docker. **`instalacion/datos/` contiene datos personales y hashes de contraseñas**: se debe mover al servidor por un canal seguro y borrar cuando ya no se necesite.

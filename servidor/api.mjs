@@ -1,3 +1,6 @@
+import { correoAsignacion, correoNota, correoPrueba } from './correo.mjs';
+import { crearZip } from './zip.mjs';
+
 // Atalaya · Licitaciones Sermaluc — API
 // Recibe una Request web estándar y devuelve una Response (la expone servidor/server.mjs).
 // La base de datos llega en env.DB con una interfaz mínima:
@@ -14,6 +17,9 @@
 //   DEMO_DATA       objeto con los datos de demostración (lo entrega server.mjs)
 //   FILES           almacén de archivos con interfaz de R2: put(clave, datos, opciones) / get(clave) / delete(clave)
 //   GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET  credenciales OAuth de Google (opcional: activa "Ingresar con Google")
+//   CORREO          cliente de correo (servidor/correo.mjs) creado con SMTP_*; sin él no se envían avisos
+//   EN_SEGUNDO_PLANO(promesa)  mantiene viva una tarea después de responder (ctx.waitUntil en Cloudflare)
+//   APP_URL         dirección pública de Atalaya para los enlaces de los correos (por defecto, la de la solicitud)
 
 const enc = new TextEncoder();
 const ESTADOS = ['nueva', 'evaluacion', 'preparacion', 'presentada', 'adjudicada', 'noadjudicada', 'descartada'];
@@ -435,6 +441,15 @@ async function rutasLicitacion(env, req, u, codigo, accion) {
       await registrar(env, codigo, u.email, destino ? `${u.nombre} asignó la licitación a ${destino.nombre}` : `${u.nombre} quitó el responsable`);
       if (destino && s.estado === 'nueva') await setEstado(env, codigo, 'evaluacion', u);
     }
+    if (destino && destino.email !== u.email && s.responsable !== resp) {
+      const l = await datosAviso(env, codigo);
+      avisar(env, req, {
+        accion: 'correo.asignacion', codigo, usuario: u.email, para: [destino.email],
+        descripcion: `Atalaya avisó por correo a ${destino.nombre} que se le asignó ${L}`,
+        descripcionError: `Atalaya no pudo avisar por correo a ${destino.nombre} que se le asignó ${L}`,
+        mensaje: correoAsignacion({ lic: l, estadoLabel: ESTADO_LABEL[l.estado] || l.estado, destino, asignador: u, url: enlaceLic(env, req, codigo) }),
+      });
+    }
     anotar(req, 'licitacion.responsable', destino ? `${u.nombre} asignó ${L} a ${destino.nombre}` : `${u.nombre} dejó ${L} sin responsable`, { codigo, datos: { antes: s.responsable || null, despues: resp || null } });
   } else if (accion === 'documentos') {
     const doc = str(body.doc, 40);
@@ -455,6 +470,14 @@ async function rutasLicitacion(env, req, u, codigo, accion) {
     const texto = str(body.texto, 4000);
     if (!texto) throw new HttpError(400, 'La nota está vacía.');
     await registrar(env, codigo, u.email, texto, 'nota');
+    const [l, eq] = await Promise.all([datosAviso(env, codigo), env.DB.prepare('SELECT email FROM usuarios WHERE email <> ? ORDER BY email').bind(u.email).all()]);
+    const para = eq.results.map((x) => x.email).filter((e) => e.endsWith('@' + config(env).domain));
+    avisar(env, req, {
+      accion: 'correo.nota', codigo, usuario: u.email, para,
+      descripcion: `Atalaya envió por correo la nota de ${u.nombre} sobre ${L} a ${para.length} persona${para.length === 1 ? '' : 's'} del equipo`,
+      descripcionError: `Atalaya no pudo enviar por correo la nota de ${u.nombre} sobre ${L}`,
+      mensaje: correoNota({ lic: l, estadoLabel: ESTADO_LABEL[l.estado] || l.estado, responsable: l.responsable_nombre, autor: u, nota: texto, url: enlaceLic(env, req, codigo) }),
+    });
     anotar(req, 'licitacion.nota', `${u.nombre} escribió una nota en ${L}`, { codigo, datos: { texto: texto.slice(0, 500) } });
   } else if (accion === 'requeridos') {
     // Documento del checklist agregado a mano por el equipo (p. ej. tras leer las bases)
@@ -544,6 +567,62 @@ async function descargarArchivo(env, req, u, id) {
     headers: {
       'content-type': a.tipo_mime,
       'content-disposition': `attachment; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(a.nombre)}`,
+      'cache-control': 'private, no-store',
+      'x-content-type-options': 'nosniff',
+    },
+  });
+}
+// Todos los archivos adjuntos a los documentos del checklist, en un ZIP con una carpeta por documento
+const MAX_ZIP = 90 * 1024 * 1024; // margen bajo la memoria de un Worker de Cloudflare (128 MB)
+const nombreZip = (s, max = 80) => String(s || '').replace(/[\\/:*?"<>|\u0000-\u001f]/g, '-').replace(/\s+/g, ' ').trim().slice(0, max).replace(/[ .]+$/, '') || 'documento';
+async function exportarDocumentos(env, req, u, codigo) {
+  if (!env.FILES) throw new HttpError(503, 'El almacenamiento de archivos no está configurado.');
+  const lic = await licitacionOr404(env, codigo);
+  const [docs, arch, listos] = await batch(env, [
+    env.DB.prepare('SELECT doc_id, nombre, tipo, obligatorio FROM documentos_requeridos WHERE codigo = ? ORDER BY orden, doc_id').bind(codigo),
+    env.DB.prepare(`SELECT a.id, a.doc_id, a.nombre, a.tamano, a.clave_almacen, a.fecha FROM archivos a
+      JOIN documentos_requeridos d ON d.codigo = a.codigo AND d.doc_id = a.doc_id WHERE a.codigo = ? ORDER BY a.fecha`).bind(codigo),
+    env.DB.prepare('SELECT doc_id FROM documentos_listos WHERE codigo = ?').bind(codigo),
+  ]);
+  if (!arch.results.length) throw new HttpError(404, 'Aún no hay archivos adjuntos a los documentos del checklist.');
+  const total = arch.results.reduce((s, a) => s + Number(a.tamano || 0), 0);
+  if (total > MAX_ZIP) throw new HttpError(413, `Los documentos suman ${Math.round(total / 1048576)} MB y superan el máximo de ${MAX_ZIP / 1048576} MB para un solo ZIP. Descárgalos por separado.`);
+
+  const listo = new Set(listos.results.map((r) => r.doc_id));
+  const entradas = [];
+  const indice = [`Documentos de la licitación ${lic.codigo}`, lic.nombre, `Exportado desde Atalaya por ${u.nombre} el ${new Date().toLocaleString('es-CL', { timeZone: 'America/Santiago' })}`, ''];
+  let faltan = 0;
+  docs.results.forEach((d, i) => {
+    const propios = arch.results.filter((a) => a.doc_id === d.doc_id);
+    const carpeta = `${String(i + 1).padStart(2, '0')} - ${nombreZip(d.nombre)}`;
+    indice.push(`${String(i + 1).padStart(2, '0')}. ${d.nombre} [${d.tipo}${Number(d.obligatorio) ? ', obligatorio' : ''}] — ${listo.has(d.doc_id) ? 'LISTO' : 'pendiente'}`);
+    if (!propios.length) { indice.push('    (sin archivo adjunto)'); return; }
+    const usados = new Set();
+    for (const a of propios) {
+      let n = nombreZip(a.nombre, 120);
+      for (let k = 2; usados.has(n.toLowerCase()); k++) n = nombreZip(a.nombre, 120).replace(/(\.[^.]+)?$/, ` (${k})$1`);
+      usados.add(n.toLowerCase());
+      entradas.push({ ruta: `${carpeta}/${n}`, a });
+      indice.push(`    - ${n}`);
+    }
+  });
+  for (const e of entradas) {
+    const obj = await env.FILES.get(e.a.clave_almacen);
+    if (!obj) { faltan++; e.datos = null; continue; }
+    e.datos = new Uint8Array(await new Response(obj.body).arrayBuffer());
+  }
+  if (faltan) indice.push('', `Atención: ${faltan} archivo(s) registrados ya no estaban disponibles en el almacenamiento.`);
+  const zip = crearZip([
+    { nombre: '00 - Índice de documentos.txt', datos: new TextEncoder().encode(indice.join('\r\n') + '\r\n') },
+    ...entradas.filter((e) => e.datos).map((e) => ({ nombre: e.ruta, datos: e.datos, fecha: new Date(e.a.fecha) })),
+  ]);
+  const archivo = `${lic.codigo} - documentos.zip`;
+  anotar(req, 'archivo.exportar', `${u.nombre} descargó en un ZIP los ${entradas.length - faltan} archivos del checklist de ${nombreLic(lic)}`, { codigo, datos: { archivos: entradas.length - faltan, bytes: zip.length } });
+  return new Response(zip, {
+    headers: {
+      'content-type': 'application/zip',
+      'content-disposition': `attachment; filename="${archivo.replace(/[^\x20-\x7e]/g, '_')}"; filename*=UTF-8''${encodeURIComponent(archivo)}`,
+      'content-length': String(zip.length),
       'cache-control': 'private, no-store',
       'x-content-type-options': 'nosniff',
     },
@@ -837,6 +916,52 @@ async function rutasEquipo(env, req, u, cfg, email) {
   throw new HttpError(405, 'Método no permitido.');
 }
 
+/* ---------------- avisos por correo ---------------- */
+// Los correos salen en segundo plano: guardar una nota o asignar no espera al servidor de correo.
+// El resultado de cada envío queda en el registro de actividad (correo.asignacion / correo.nota).
+const baseUrl = (env, req) => (env.APP_URL || new URL(req.url).origin).replace(/\/$/, '');
+const enlaceLic = (env, req, codigo) => `${baseUrl(env, req)}/#/licitacion/${encodeURIComponent(codigo)}`;
+async function datosAviso(env, codigo) {
+  return env.DB.prepare(`SELECT l.codigo, l.nombre, o.nombre AS organismo, COALESCE(s.estado, 'nueva') AS estado,
+      (SELECT fecha FROM licitacion_fechas f WHERE f.codigo = l.codigo AND f.hito = 'cierre') AS cierre,
+      u.nombre AS responsable_nombre,
+      (SELECT COUNT(*) FROM documentos_requeridos d WHERE d.codigo = l.codigo AND d.obligatorio = 1
+         AND NOT EXISTS (SELECT 1 FROM documentos_listos x WHERE x.codigo = d.codigo AND x.doc_id = d.doc_id)) AS pendientes
+    FROM licitaciones l LEFT JOIN organismos o ON o.id = l.organismo_id LEFT JOIN seguimiento s ON s.codigo = l.codigo
+    LEFT JOIN usuarios u ON u.email = s.responsable WHERE l.codigo = ?`).bind(codigo).first();
+}
+function avisar(env, req, { accion, codigo, usuario, para, descripcion, descripcionError, mensaje }) {
+  if (!env.CORREO || !para.length) return;
+  const tarea = (async () => {
+    let error = null;
+    try { await env.CORREO.enviar({ para, ...mensaje, responderA: accion === 'correo.nota' ? usuario : undefined }); }
+    catch (e) { error = String(e.message || e).slice(0, 400); console.error('[correo]', error); }
+    await env.DB.prepare('INSERT INTO auditoria (id, fecha, usuario, accion, descripcion, codigo, resultado, detalle) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .bind(uid(), nowIso(), usuario, accion, error ? `${descripcionError}: ${error}` : descripcion, codigo || null,
+        error ? 'error' : 'ok', JSON.stringify({ destinatarios: para, asunto: mensaje.asunto, ...(error ? { error } : {}) })).run();
+  })().catch((e) => console.error('[correo]', e));
+  if (typeof env.EN_SEGUNDO_PLANO === 'function') env.EN_SEGUNDO_PLANO(tarea);
+}
+async function rutasCorreo(env, req, u, accion) {
+  if (!accion && req.method === 'GET') {
+    const n = await env.DB.prepare('SELECT COUNT(*) AS n FROM usuarios').first();
+    return json({ activo: !!env.CORREO, remitente: env.CORREO?.remitente || null, equipo: Number(n.n) });
+  }
+  if (accion === 'prueba' && req.method === 'POST') {
+    if (u.rol !== 'admin') throw new HttpError(403, 'Solo la administración puede enviar correos de prueba.');
+    if (!env.CORREO) throw new HttpError(503, 'El correo no está configurado en el servidor (faltan SMTP_HOST, SMTP_USER o SMTP_PASSWORD).');
+    try {
+      await env.CORREO.enviar({ para: [u.email], ...correoPrueba({ persona: u, url: baseUrl(env, req) }) });
+    } catch (e) {
+      anotar(req, 'correo.prueba', `${u.nombre} intentó enviar un correo de prueba`, { fallo: true, datos: { error: String(e.message || e).slice(0, 400) } });
+      throw new HttpError(502, `No se pudo enviar: ${e.message}`);
+    }
+    anotar(req, 'correo.prueba', `${u.nombre} envió un correo de prueba a ${u.email}`);
+    return json({ ok: true, para: u.email });
+  }
+  throw new HttpError(405, 'Método no permitido.');
+}
+
 /* ---------------- enrutador ---------------- */
 export async function handle(req, env) {
   const inicio = Date.now();
@@ -960,6 +1085,8 @@ async function rutear(req, env) {
     if (m && req.method === 'DELETE') return await quitarRequerido(env, req, u, decodeURIComponent(m[1]), decodeURIComponent(m[2]));
     m = path.match(/^\/api\/licitaciones\/([^/]+)\/adjuntos$/);
     if (m && req.method === 'GET') return await irAdjuntos(env, req, u, decodeURIComponent(m[1]));
+    m = path.match(/^\/api\/licitaciones\/([^/]+)\/documentos\.zip$/);
+    if (m && req.method === 'GET') return await exportarDocumentos(env, req, u, decodeURIComponent(m[1]));
     m = path.match(/^\/api\/licitaciones\/([^/]+)\/archivos$/);
     if (m && req.method === 'POST') return await subirArchivo(env, req, u, decodeURIComponent(m[1]));
     m = path.match(/^\/api\/archivos\/([^/]+)$/);
@@ -969,6 +1096,8 @@ async function rutear(req, env) {
     if (m) return await rutasPalabras(env, req, u, m[1]);
     if (path === '/api/auditoria' && req.method === 'GET') return json(await leerAuditoria(env, url));
 
+    m = path.match(/^\/api\/correo(?:\/(prueba))?$/);
+    if (m) return await rutasCorreo(env, req, u, m[1]);
     m = path.match(/^\/api\/equipo(?:\/([^/]+))?$/);
     if (m) return await rutasEquipo(env, req, u, cfg, m[1]);
 

@@ -31,6 +31,11 @@ fallthrough = true
 ALLOWED_DOMAIN = "sermaluc.cl"
 ADMIN_EMAILS = "tania.bastias@sermaluc.cl"
 DEMO = "0"
+# Avisos por correo (al asignar y al agregar notas). Falta cargar como secretos SMTP_USER y SMTP_PASSWORD:
+#   npx wrangler secret put SMTP_USER       (cuenta que envía, p. ej. tania.bastias@sermaluc.cl)
+#   npx wrangler secret put SMTP_PASSWORD   (contraseña de aplicación de Google de esa cuenta)
+SMTP_HOST = "smtp.gmail.com"
+SMTP_PORT = "465"
 
 # La base D1 vive en el este de EE.UU. (no hay región en Sudamérica): el Worker corre junto a ella
 # para que cada consulta tarde ~2 ms en vez de ~150 ms desde Chile.

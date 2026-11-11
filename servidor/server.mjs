@@ -8,6 +8,9 @@ import { fileURLToPath } from 'node:url';
 import { handle } from './api.mjs';
 import { crearDB } from './db-sqlite.mjs';
 import { crearAlmacen } from './archivos-disco.mjs';
+import { crearSmtp } from './correo.mjs';
+import tls from 'node:tls';
+import { Duplex } from 'node:stream';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = path.join(RAIZ, 'site');
@@ -35,6 +38,21 @@ const env = {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   DEMO: process.env.DEMO,
+  APP_URL: process.env.APP_URL,
+  // Avisos por correo (opcional): TLS directo al servidor SMTP, puerto 465
+  CORREO: crearSmtp({
+    host: process.env.SMTP_HOST, puerto: process.env.SMTP_PORT || 465, usuario: process.env.SMTP_USER,
+    clave: process.env.SMTP_PASSWORD, remitente: process.env.MAIL_FROM,
+    conectar: (host, puerto) => new Promise((ok, no) => {
+      const s = tls.connect({ host, port: puerto, servername: host }, () => {
+        s.on('error', (e) => console.error('[correo]', e.message)); // nunca derribar el servidor por el correo
+        const { readable, writable } = Duplex.toWeb(s);
+        ok({ readable, writable, close: () => s.destroy() });
+      });
+      s.once('error', no);
+    }),
+  }),
+  EN_SEGUNDO_PLANO: (p) => p,
   DEMO_DATA: process.env.DEMO === '1' ? JSON.parse(readFileSync(path.join(RAIZ, 'data', 'demo.json'), 'utf8')) : null,
 };
 if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) {

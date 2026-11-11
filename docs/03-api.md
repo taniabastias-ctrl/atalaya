@@ -78,6 +78,7 @@ Errores: `401` (token inválido; además cuenta para el límite de intentos), `5
 | `POST /api/licitaciones/:cod/archivos` | `multipart/form-data` con `archivo` (obligatorio), `categoria` (`bases` o `preparado`) y `doc_id` (opcional, ítem del checklist). Máximo 25 MB. Extensiones permitidas: pdf, doc, docx, xls, xlsx, ppt, pptx, odt, ods, csv, txt, zip, rar, 7z, jpg, jpeg, png. El tipo MIME se deduce de la extensión (no se confía en el navegador). `413` muy grande, `415` tipo no permitido. |
 | `GET /api/archivos/:id` | Descarga el archivo (`content-disposition: attachment`). |
 | `DELETE /api/archivos/:id` | Borra el archivo. Solo quien lo subió o la administración. |
+| `GET /api/licitaciones/:cod/documentos.zip` | Descarga en un ZIP **solo los archivos adjuntos a los documentos del checklist** (no las bases sueltas): una carpeta por documento (`01 - Anexo N°1 …/`), archivos con el mismo nombre renombrados `(2)`, `(3)`…, y `00 - Índice de documentos.txt` con el estado (listo o pendiente) de cada documento. Método *store* (sin recomprimir) y nombres en UTF-8. `404` si no hay archivos en el checklist; `413` si suman más de 90 MB. Queda en el registro como `archivo.exportar`. |
 
 Los archivos se guardan con la clave `licitaciones/<código>/<uuid>`.
 
@@ -90,6 +91,20 @@ Los archivos se guardan con la clave `licitaciones/<código>/<uuid>`.
 | `PATCH /api/configuracion/palabras/:palabra` | Admin | `{ peso?, activa? }`. |
 | `DELETE /api/configuracion/palabras/:palabra` | Admin | Elimina la palabra. |
 | `GET /api/auditoria` | Sesión | Registro de actividad. Parámetros: `q` (texto), `usuario` (correo), `resultado` (`ok`/`error`), `antes` (fecha ISO, para paginar), `limite` (10–200, por defecto 50). Respuesta `{ registros: [{ id, fecha, usuario, accion, descripcion, codigo, resultado, detalle }], hayMas }`. |
+
+### Avisos por correo
+
+| Método y ruta | Acceso | Descripción |
+|---|---|---|
+| `GET /api/correo` | Sesión | `{ activo, remitente, equipo }`: si el envío de correos está configurado y desde qué cuenta. |
+| `POST /api/correo/prueba` | Admin | Envía un correo de prueba a quien lo pide. `503` si no hay SMTP configurado, `502` si el servidor de correo rechaza el envío (el mensaje explica el motivo). |
+
+Además, dos acciones envían correos en segundo plano (la respuesta no espera al servidor de correo):
+
+- `POST /api/licitaciones/:cod/responsable`: avisa a la persona asignada (no cuando alguien se asigna a sí mismo, cuando no cambia o cuando se quita el responsable).
+- `POST /api/licitaciones/:cod/notas`: envía la nota a todos los usuarios `@sermaluc.cl` registrados, menos a quien la escribió, con `Reply-To` a su autor.
+
+Cada envío queda en el registro de actividad como `correo.asignacion` o `correo.nota`, con resultado `ok` o `error` y la lista de destinatarios en el detalle técnico.
 
 ### Usuarios (solo administración)
 

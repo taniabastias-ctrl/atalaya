@@ -8,6 +8,10 @@ import { fileURLToPath } from 'node:url';
 import { handle } from './api.mjs';
 import { crearDB } from './db-sqlite.mjs';
 import { crearAlmacen } from './archivos-disco.mjs';
+import { crearSmtp } from './correo.mjs';
+import { crc32 } from './zip.mjs';
+import net from 'node:net';
+import { Duplex } from 'node:stream';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dirArchivos = mkdtempSync(path.join(tmpdir(), 'atalaya-pruebas-'));
@@ -208,6 +212,151 @@ try {
   assert.equal(c1509.responsable, 'Camila Rojas'); assert.ok(c1509.fechas.cierre); ok('muestra el nombre del responsable y las fechas');
   assert.ok(!pub.data.licitaciones.some((x) => x.estado === 'descartada')); ok('omite las descartadas');
   cookie = sesionGuardada;
+
+  console.log('Exportar documentos del checklist (ZIP)');
+  const LZ = '2190-33-LR26';
+  const subirZ = async (contenido, nombre, docId) => {
+    const f = new FormData();
+    f.append('archivo', new File([contenido], nombre)); f.append('categoria', docId ? 'preparado' : 'bases');
+    if (docId) f.append('doc_id', docId);
+    assert.equal((await call('POST', `/api/licitaciones/${LZ}/archivos`, f)).status, 200);
+  };
+  assert.equal((await call('GET', `/api/licitaciones/${LZ}/documentos.zip`)).status, 404); ok('sin archivos en el checklist, avisa que no hay nada que exportar');
+  const docsZ = (await datos()).licitaciones.find((x) => x.codigo === LZ).documentos;
+  await subirZ('%PDF-1.4 anexo uno', 'Anexo 1 · Identificación.pdf', docsZ[0].id);
+  await subirZ('%PDF-1.4 anexo uno versión 2', 'Anexo 1 · Identificación.pdf', docsZ[0].id);
+  await subirZ('planilla', 'Oferta económica.xlsx', docsZ[2].id);
+  await subirZ('%PDF bases sueltas', 'Bases administrativas.pdf', '');
+  const rz = await call('GET', `/api/licitaciones/${LZ}/documentos.zip`);
+  assert.equal(rz.status, 200);
+  assert.equal(rz.headers.get('content-type'), 'application/zip');
+  assert.ok(rz.headers.get('content-disposition').includes(`${LZ}%20-%20documentos.zip`)); ok('descarga un ZIP con el código de la licitación en el nombre');
+  // Lectura del ZIP (directorio central) para verificar su estructura e integridad
+  const zb = Buffer.from(rz.data);
+  const fin = zb.lastIndexOf(Buffer.from([0x50, 0x4b, 0x05, 0x06]));
+  const nEnt = zb.readUInt16LE(fin + 10);
+  let pc = zb.readUInt32LE(fin + 16);
+  const contenidoZ = {};
+  for (let i = 0; i < nEnt; i++) {
+    const largo = zb.readUInt16LE(pc + 28), extraL = zb.readUInt16LE(pc + 30), comL = zb.readUInt16LE(pc + 32);
+    const nombre = zb.subarray(pc + 46, pc + 46 + largo).toString('utf8');
+    const crc = zb.readUInt32LE(pc + 16), tam = zb.readUInt32LE(pc + 24), off = zb.readUInt32LE(pc + 42);
+    const ini = off + 30 + zb.readUInt16LE(off + 26) + zb.readUInt16LE(off + 28);
+    const datosZ = zb.subarray(ini, ini + tam);
+    contenidoZ[nombre] = { texto: datosZ.toString('utf8'), crcOk: crc === crc32(datosZ) };
+    pc += 46 + largo + extraL + comL;
+  }
+  const nombresZ = Object.keys(contenidoZ);
+  const c1 = `01 - ${docsZ[0].nombre.replace(/[\\/:*?"<>|]/g, '-')}`;
+  assert.ok(nombresZ.includes(`${c1}/Anexo 1 · Identificación.pdf`) && nombresZ.includes(`${c1}/Anexo 1 · Identificación (2).pdf`)); ok('una carpeta por documento, sin pisar archivos con el mismo nombre');
+  assert.ok(nombresZ.some((x) => x.startsWith('03 - ') && x.endsWith('/Oferta económica.xlsx'))); ok('nombres con tildes y símbolos se conservan (UTF-8)');
+  assert.ok(!nombresZ.some((x) => x.includes('Bases administrativas'))); ok('solo incluye los archivos asociados a documentos del checklist');
+  assert.equal(contenidoZ[`${c1}/Anexo 1 · Identificación (2).pdf`].texto, '%PDF-1.4 anexo uno versión 2');
+  assert.ok(Object.values(contenidoZ).every((x) => x.crcOk)); ok('contenido íntegro (CRC correcto)');
+  const indiceZ = contenidoZ['00 - Índice de documentos.txt'].texto;
+  assert.ok(indiceZ.includes(LZ) && indiceZ.includes('(sin archivo adjunto)') && indiceZ.includes('pendiente')); ok('incluye un índice con el estado de cada documento');
+  const logZ = (await call('GET', '/api/auditoria?q=ZIP')).data.registros;
+  assert.ok(logZ.some((x) => x.accion === 'archivo.exportar' && x.codigo === LZ)); ok('la exportación queda en el registro de actividad');
+  assert.equal((await call('GET', '/api/licitaciones/NO-EXISTE-1/documentos.zip')).status, 404); ok('licitación inexistente → 404');
+
+  console.log('Avisos por correo');
+  const pendientes = [];
+  const enviados = [];
+  let fallar = false;
+  env.EN_SEGUNDO_PLANO = (p) => pendientes.push(p);
+  env.CORREO = { activo: true, remitente: 'atalaya@sermaluc.cl', enviar: async (m) => { if (fallar) throw new Error('SMTP caído'); enviados.push(m); } };
+  const esperar = async () => { await Promise.all(pendientes.splice(0)); };
+  const LIC = '7710-15-LE26';
+  assert.equal((await call('POST', `/api/licitaciones/${LIC}/responsable`, { responsable: 'valentina.soto@sermaluc.cl' })).status, 200);
+  await esperar();
+  assert.equal(enviados.length, 1);
+  assert.deepEqual(enviados[0].para, ['valentina.soto@sermaluc.cl']); ok('al asignar, avisa por correo a la persona asignada');
+  assert.ok(enviados[0].asunto.startsWith('Te asignaron una licitación'));
+  assert.ok(enviados[0].html.includes(LIC) && enviados[0].html.includes(`http://localhost:8080/#/licitacion/${LIC}`) && enviados[0].html.includes('Camila'));
+  assert.ok(enviados[0].texto.includes(LIC)); ok('el aviso trae la licitación, quién asignó, el plazo y el enlace a la ficha');
+  assert.ok(enviados[0].html.includes('#0071FF') && enviados[0].html.includes('ATALAYA')); ok('el correo usa la identidad de Atalaya');
+  enviados.length = 0;
+  await call('POST', `/api/licitaciones/${LIC}/responsable`, { responsable: 'valentina.soto@sermaluc.cl' }); await esperar();
+  await call('POST', `/api/licitaciones/${LIC}/responsable`, { responsable: 'camila.rojas@sermaluc.cl' }); await esperar();
+  await call('POST', `/api/licitaciones/${LIC}/responsable`, { responsable: '' }); await esperar();
+  assert.equal(enviados.length, 0); ok('no avisa si no cambia, si te asignas tú o si se quita el responsable');
+
+  await call('POST', `/api/licitaciones/${LIC}/notas`, { texto: 'Revisar la garantía <b>antes</b> del viernes\nOjo con el anexo 4' });
+  await esperar();
+  assert.equal(enviados.length, 1);
+  const eq = (await datos()).equipo.map((p) => p.id).filter((e) => e !== 'camila.rojas@sermaluc.cl').sort();
+  assert.deepEqual([...enviados[0].para].sort(), eq); ok('una nota se envía a todo el equipo (menos a quien la escribió)');
+  assert.equal(enviados[0].responderA, 'camila.rojas@sermaluc.cl'); ok('responder el correo de una nota le escribe a su autora');
+  assert.ok(enviados[0].html.includes('Revisar la garantía &lt;b&gt;antes&lt;/b&gt; del viernes<br>Ojo con el anexo 4')); ok('la nota va completa, escapada y con sus saltos de línea');
+
+  let logC = (await call('GET', '/api/auditoria?q=correo')).data.registros;
+  assert.ok(logC.some((x) => x.accion === 'correo.asignacion' && x.resultado === 'ok'));
+  assert.ok(logC.some((x) => x.accion === 'correo.nota' && x.resultado === 'ok' && x.detalle.destinatarios.length === eq.length)); ok('cada envío queda en el registro de actividad');
+  fallar = true;
+  assert.equal((await call('POST', `/api/licitaciones/${LIC}/notas`, { texto: 'Otra nota' })).status, 200);
+  await esperar();
+  logC = (await call('GET', '/api/auditoria?q=correo&resultado=error')).data.registros;
+  assert.ok(logC.some((x) => x.accion === 'correo.nota' && x.descripcion.includes('SMTP caído'))); ok('si el correo falla, la nota se guarda igual y el error queda registrado');
+  fallar = false;
+
+  const rc = await call('GET', '/api/correo');
+  assert.equal(rc.data.activo, true); assert.equal(rc.data.remitente, 'atalaya@sermaluc.cl'); ok('Configuración muestra que el correo está activo');
+  enviados.length = 0;
+  assert.equal((await call('POST', '/api/correo/prueba')).status, 200);
+  assert.deepEqual(enviados[0].para, ['camila.rojas@sermaluc.cl']); ok('la administración puede enviarse un correo de prueba');
+  delete env.CORREO;
+  assert.equal((await call('GET', '/api/correo')).data.activo, false);
+  assert.equal((await call('POST', '/api/correo/prueba')).status, 503);
+  await call('POST', `/api/licitaciones/${LIC}/notas`, { texto: 'Sin correo configurado' }); await esperar();
+  assert.equal(enviados.length, 1); ok('sin SMTP configurado, Atalaya funciona igual y no envía nada');
+  delete env.EN_SEGUNDO_PLANO;
+
+  console.log('Cliente SMTP');
+  const recibidos = [];
+  const servidorSmtp = net.createServer((c) => {
+    let buf = '', enDatos = false, datosMsg = '';
+    const di = (t) => c.write(t + '\r\n');
+    c.on('error', () => {});
+    di('220 smtp.prueba listo');
+    c.on('data', (b) => {
+      buf += b.toString('utf8');
+      let i;
+      while ((i = buf.indexOf('\r\n')) >= 0) {
+        const linea = buf.slice(0, i); buf = buf.slice(i + 2);
+        if (enDatos) {
+          if (linea === '.') { enDatos = false; recibidos.push(datosMsg); di('250 2.0.0 OK'); } else datosMsg += linea + '\r\n';
+          continue;
+        }
+        if (linea.startsWith('EHLO')) c.write('250-smtp.prueba\r\n250-AUTH LOGIN PLAIN\r\n250 8BITMIME\r\n');
+        else if (linea === 'AUTH LOGIN') di('334 VXNlcm5hbWU6');
+        else if (linea === Buffer.from('atalaya@sermaluc.cl').toString('base64')) di('334 UGFzc3dvcmQ6');
+        else if (linea === Buffer.from('clave-buena').toString('base64')) di('235 2.7.0 Accepted');
+        else if (linea === Buffer.from('clave-mala').toString('base64')) di('535 5.7.8 Username and Password not accepted');
+        else if (linea.startsWith('MAIL FROM') || linea.startsWith('RCPT TO')) di('250 OK');
+        else if (linea === 'DATA') { enDatos = true; datosMsg = ''; di('354 Go ahead'); }
+        else if (linea === 'QUIT') { di('221 Bye'); c.end(); }
+      }
+    });
+  });
+  await new Promise((r) => servidorSmtp.listen(0, '127.0.0.1', r));
+  const puertoSmtp = servidorSmtp.address().port;
+  const conectar = (host, p) => new Promise((okc, no) => {
+    const s = net.connect({ host, port: p }, () => {
+      s.on('error', () => {}); const { readable, writable } = Duplex.toWeb(s); okc({ readable, writable, close: () => s.destroy() }); });
+    s.once('error', no);
+  });
+  try {
+    assert.equal(crearSmtp({ host: '', usuario: 'x', clave: 'y', conectar }), null); ok('sin datos de SMTP no se crea el cliente');
+    const cli = crearSmtp({ host: '127.0.0.1', puerto: puertoSmtp, usuario: 'atalaya@sermaluc.cl', clave: 'clave-buena', conectar });
+    await cli.enviar({ para: ['a@sermaluc.cl', 'b@sermaluc.cl', 'malo\r\nBcc: x@y.z'], asunto: 'Licitación «Mesa de ayuda» · 3 días', html: '<p>.inicio</p>', texto: '.línea con punto' });
+    const msg = recibidos[0];
+    assert.ok(msg.includes('Subject: =?UTF-8?B?')); ok('asunto con tildes codificado (RFC 2047)');
+    assert.ok(/^To: <a@sermaluc\.cl>, <b@sermaluc\.cl>\r$/m.test(msg) && !msg.includes('Bcc')); ok('descarta destinatarios con saltos de línea (sin inyección de cabeceras)');
+    const partes = [...msg.matchAll(/base64\r\n\r\n([A-Za-z0-9+/=\r\n]+?)\r\n--/g)].map((m) => Buffer.from(m[1].replace(/\r\n/g, ''), 'base64').toString('utf8'));
+    assert.deepEqual(partes, ['.línea con punto', '<p>.inicio</p>']); ok('mensaje con versión texto y HTML en UTF-8');
+    const malo = crearSmtp({ host: '127.0.0.1', puerto: puertoSmtp, usuario: 'atalaya@sermaluc.cl', clave: 'clave-mala', conectar });
+    await assert.rejects(malo.enviar({ para: ['a@sermaluc.cl'], asunto: 'x', html: 'x', texto: 'x' }), /contraseña.*535/); ok('una contraseña incorrecta da un error claro');
+  } finally { servidorSmtp.close(); }
 
   console.log('Seguridad');
   assert.equal((await call('POST', '/api/licitaciones/4021-9-L126/notas', { texto: 'x' }, { origin: 'https://otro.example' })).status, 403); ok('rechaza otro origen (CSRF)');

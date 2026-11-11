@@ -57,6 +57,7 @@
     sparkle: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
     tag: '<path d="M3 12V3h9l9 9-9 9Z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
     mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+    chat: '<path d="M4 5h16v11H9l-5 4Z"/><path d="M8 9.5h8M8 12.5h5"/>',
     shield: '<path d="M12 3 4 6v6c0 5 4 8 8 9 4-1 8-4 8-9V6Z"/>',
     target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
     logout: '<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/>',
@@ -647,6 +648,17 @@
       </div>`;
       }).join('')}
     </div>`).join('') || '<div class="empty">Aún no hay documentos en el checklist.</div>'}
+    ${(() => {
+      const enChk = l.archivos.filter(a => a.docId && ids.has(a.docId));
+      if (!l.documentos.length) return '';
+      const conArchivo = new Set(enChk.map(a => a.docId)).size;
+      const peso = enChk.reduce((t, a) => t + (a.tamano || 0), 0);
+      return `<div class="export-docs ${enChk.length ? '' : 'off'}">
+        <div><b>${ic('download')}Exportar documentos del checklist</b>
+        <small>${enChk.length ? `${enChk.length} archivo${enChk.length === 1 ? '' : 's'} en ${conArchivo} de ${l.documentos.length} documentos · ${fSize(peso)} · un ZIP con una carpeta por documento y un índice` : 'Adjunta archivos a los documentos con el clip para poder exportarlos juntos'}</small></div>
+        ${enChk.length ? `<a class="btn pri" href="/api/licitaciones/${encodeURIComponent(l.codigo)}/documentos.zip" download>${ic('download')}Descargar todos (ZIP)</a>` : `<button class="btn" disabled>${ic('download')}Descargar todos (ZIP)</button>`}
+      </div>`;
+    })()}
     <form class="add-req" id="addReq">
       <input class="input" name="nombre" maxlength="300" placeholder="Agregar un documento que piden las bases (p. ej. Anexo N°7 · Boleta de garantía)" required>
       <label class="select"><select name="tipo"><option>Administrativo</option><option>Técnico</option><option>Económico</option></select></label>
@@ -822,7 +834,7 @@
   function bindEquipo() { }
 
   /* ---------------- Vista: Configuración ---------------- */
-  const cfg = { palabras: null, filtroPal: '', log: [], logMas: false, logQ: '', logUser: '', logRes: '', logCargando: false, abierto: new Set(), editUser: '' };
+  const cfg = { palabras: null, filtroPal: '', log: [], logMas: false, logQ: '', logUser: '', logRes: '', logCargando: false, abierto: new Set(), editUser: '', correo: null };
   const accesoDe = p => p.conClave ? 'Con contraseña' : p.ultimoIngreso ? 'Solo Google' : 'Pendiente';
   function vConfig(params) {
     if (params && params.get('tab')) ui.cfgTab = params.get('tab');
@@ -830,13 +842,40 @@
     const admin = ME.rol === 'admin';
     return `
     <div class="head rise"><div><span class="kicker">Ajustes de la plataforma</span><h1>Configuración</h1>
-      <p>${admin ? 'Palabras clave del agente, usuarios y registro de todo lo que pasa en Atalaya.' : 'Palabras clave que usa el agente y registro de actividad. Solo la administración puede modificarlas.'}</p></div></div>
+      <p>${admin ? 'Palabras clave del agente, usuarios, avisos por correo y registro de todo lo que pasa en Atalaya.' : 'Palabras clave que usa el agente y registro de actividad. Solo la administración puede modificarlas.'}</p></div></div>
     <div class="pills" id="cfgTabs">
       <button data-t="palabras" class="${t === 'palabras' ? 'on' : ''}">${ic('tag')}Palabras clave</button>
       <button data-t="usuarios" class="${t === 'usuarios' ? 'on' : ''}">${ic('team')}Usuarios<em>${DATA.equipo.length}</em></button>
+      <button data-t="notificaciones" class="${t === 'notificaciones' ? 'on' : ''}">${ic('mail')}Notificaciones</button>
       <button data-t="registro" class="${t === 'registro' ? 'on' : ''}">${ic('log')}Registro de actividad</button>
     </div>
-    <div id="cfgBody">${t === 'usuarios' ? cfgUsuarios() : t === 'registro' ? cfgRegistro() : cfgPalabras()}</div>`;
+    <div id="cfgBody">${cuerpoCfg(t)}</div>`;
+  }
+
+  const cuerpoCfg = t => t === 'usuarios' ? cfgUsuarios() : t === 'registro' ? cfgRegistro() : t === 'notificaciones' ? cfgNotificaciones() : cfgPalabras();
+
+  function cfgNotificaciones() {
+    const admin = ME.rol === 'admin';
+    const c = cfg.correo;
+    if (!c) return '<div class="box empty">Revisando la configuración de correo…</div>';
+    const destinatarios = DATA.equipo.filter(p => p.id.endsWith('@sermaluc.cl'));
+    const aviso = (icono, titulo, quien, texto) => `<div class="ntf"><span class="ntf-i">${ic(icono)}</span><div><b>${titulo}</b><small>${quien}</small><p>${texto}</p></div></div>`;
+    return `
+    <div class="box box-b cfg-intro ntf-estado ${c.activo ? 'on' : 'off'}">
+      <div class="ntf-head"><span class="${c.activo ? 'pill-ok' : 'pill-wait'}">${c.activo ? 'CORREO ACTIVO' : 'CORREO SIN CONFIGURAR'}</span>
+        ${c.activo ? `<span class="mono" style="color:var(--muted)">Envía: ${esc(c.remitente)}</span>` : ''}</div>
+      <p>${c.activo
+        ? 'Atalaya avisa por correo a los usuarios <b>@sermaluc.cl</b> registrados en <b>Configuración → Usuarios</b>. Los envíos quedan en el registro de actividad.'
+        : 'Los avisos se activan cuando la administración del servidor configura la cuenta de envío (SMTP_HOST, SMTP_USER y SMTP_PASSWORD). Mientras tanto, Atalaya funciona igual, sin enviar correos.'}</p>
+      ${admin && c.activo ? `<button class="btn" id="correoPrueba">${ic('mail')}Enviarme un correo de prueba</button>` : ''}
+    </div>
+    <div class="ntf-grid">
+      ${aviso('user', 'Asignación de una licitación', 'A la persona asignada', 'Cuando alguien asigna una licitación a otra persona, le llega un correo con la licitación, el plazo de cierre, los documentos pendientes y el enlace directo a la ficha.')}
+      ${aviso('chat', 'Nueva nota en una licitación', `A todo el equipo (${destinatarios.length} personas, menos quien la escribe)`, 'Cada nota se envía completa para coordinar la gestión. Si alguien responde el correo, la respuesta le llega a quien escribió la nota.')}
+    </div>
+    <section class="box" style="margin-top:16px"><div class="box-h"><h2>${ic('team')}Destinatarios del equipo <span class="mono" style="color:var(--muted)">${destinatarios.length}</span></h2></div>
+      <div class="ntf-people">${destinatarios.map(p => `<div class="person">${av(p.id)}<div><b>${esc(p.nombre)}</b><small>${esc(p.id)}</small></div></div>`).join('') || '<div class="empty">No hay usuarios registrados.</div>'}</div>
+    </section>`;
   }
 
   function cfgPalabras() {
@@ -943,7 +982,7 @@
     } catch (e) { if (!e.silent) toast('No se pudo cargar el registro', e.message, 'crit'); }
     cfg.logCargando = false;
   }
-  const pintarCfg = () => { const b = $('#cfgBody'); if (!b) return; const y = window.scrollY; b.innerHTML = ui.cfgTab === 'usuarios' ? cfgUsuarios() : ui.cfgTab === 'registro' ? cfgRegistro() : cfgPalabras(); bindCfgBody(); window.scrollTo(0, y); };
+  const pintarCfg = () => { const b = $('#cfgBody'); if (!b) return; const y = window.scrollY; b.innerHTML = cuerpoCfg(ui.cfgTab); bindCfgBody(); window.scrollTo(0, y); };
   async function cfgAccion(fn, okT, okM) {
     try { await fn(); if (okT) toast(okT, okM || '', 'ok'); }
     catch (e) { if (!e.silent) toast('No se pudo completar', e.message, 'crit'); }
@@ -953,6 +992,7 @@
     $('#cfgTabs').onclick = e => { const b = e.target.closest('button'); if (!b) return; ui.cfgTab = b.dataset.t; render(); };
     bindCfgBody();
     if (ui.cfgTab === 'palabras' && !cfg.palabras) cargarPalabras().then(pintarCfg);
+    if (ui.cfgTab === 'notificaciones') api('/api/correo').then(r => { cfg.correo = r; pintarCfg(); }).catch(e => { if (!e.silent) toast('No se pudo revisar el correo', e.message, 'crit'); });
     if (ui.cfgTab === 'registro' && !cfg.logCargando) { cfg.logCargando = !cfg.log.length; cargarLog().then(pintarCfg); }
   }
   function bindCfgBody() {
@@ -999,6 +1039,10 @@
         const n = nameOf(b.dataset.del);
         cfgAccion(async () => { await api('/api/equipo/' + encodeURIComponent(b.dataset.del), { method: 'DELETE' }); await reload(); render(); }, 'Usuario eliminado', n);
       });
+    }
+    if (t === 'notificaciones') {
+      const b = $('#correoPrueba');
+      if (b) b.onclick = () => { b.disabled = true; cfgAccion(async () => { const r = await api('/api/correo/prueba', { method: 'POST' }); return r; }, 'Correo de prueba enviado', `Revisa la bandeja de ${ME.email}`).finally(() => { b.disabled = false; }); };
     }
     if (t === 'registro') {
       let tq;

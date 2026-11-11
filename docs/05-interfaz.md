@@ -38,10 +38,10 @@ Cada vista es una función que devuelve HTML (texto escapado con `esc`) seguida 
 |---|---|
 | **Radar** | SVG animado: cada punto es una licitación abierta; la distancia al centro representa los días al cierre. Tarjeta flotante al pasar el mouse (se desplaza el grupo exterior para evitar parpadeo). Resumen del día, novedades, hitos de la semana. |
 | **Licitaciones** | Tabla filtrable por texto, estado, responsable, palabra clave y urgencia. |
-| **Ficha** | Reloj en vivo al cierre, estado, responsable, resumen, criterios, garantías, checklist de documentos con carga de archivos (arrastrar y soltar), fechas, bitácora y notas. Botón "Abrir adjuntos en Mercado Público" (`/api/licitaciones/:cod/adjuntos`). |
+| **Ficha** | Reloj en vivo al cierre, estado, responsable, resumen, criterios, garantías, checklist de documentos con carga de archivos (arrastrar y soltar) y, al final del checklist, el botón **"Descargar todos (ZIP)"** con los archivos de cada documento, fechas, bitácora y notas. Botón "Abrir adjuntos en Mercado Público" (`/api/licitaciones/:cod/adjuntos`). |
 | **Tablero** | Una tarjeta por licitación con estado editable y reloj (días, horas, minutos, segundos). |
 | **Equipo** | Carga de trabajo y próximo cierre de cada persona. |
-| **Configuración** | Palabras clave (peso, pausa, eliminación), usuarios (crear, editar, restablecer, eliminar) y registro de actividad con búsqueda, filtros, paginación y botón "Detalle técnico". Solo la administración ve los controles de edición. |
+| **Configuración** | Palabras clave (peso, pausa, eliminación), usuarios (crear, editar, restablecer, eliminar), **notificaciones** (estado del correo, qué avisos se envían, destinatarios del equipo y botón "Enviarme un correo de prueba") y registro de actividad con búsqueda, filtros, paginación y botón "Detalle técnico". Solo la administración ve los controles de edición. |
 
 ## Alertas de plazo
 
@@ -59,6 +59,15 @@ Además: campana con plazos, franja con licitaciones que cierran en menos de 48 
 - Cada licitación es un carril de pista con un caballo 🏇 que avanza desde la publicación hasta el cierre; los hitos (preguntas, respuestas, aperturas, adjudicación) aparecen como marcas con emoji.
 - Muestra el nombre de la persona asignada; filtros por estado y responsable; se actualiza cada 5 minutos.
 - Usa solo `GET /api/publico/linea` (sin datos sensibles).
+
+## Correos de aviso
+
+Las plantillas están en `servidor/correo.mjs` y siguen la identidad de Atalaya: cabecera azul noche con la marca y el lema "Vigila · Prioriza · Gana", franja azul Sermaluc a cian, tarjeta de la licitación con el color de su estado, insignia de plazo con los mismos colores de urgencia de la plataforma y botón directo a la ficha. Están hechas con tablas y estilos en línea para verse bien en Gmail, Outlook y el celular, e incluyen una versión en texto plano.
+
+| Aviso | Para quién | Contenido |
+|---|---|---|
+| Asignación | La persona asignada | Quién se la asignó, licitación, organismo, cierre y días restantes, estado, documentos obligatorios pendientes y enlace a la ficha. |
+| Nota | Todo el equipo, menos el autor | La nota completa, quién la escribió, la tarjeta de la licitación y el enlace. Responder el correo le escribe al autor. |
 
 ## Fechas y zona horaria
 
